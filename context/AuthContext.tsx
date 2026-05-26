@@ -34,10 +34,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (!token) { setLoading(false); return; }
 
     apiGet('/api/auth/me')
-      .then(setUser)
-      .catch(() => {
-        try { localStorage.removeItem('token'); } catch { /* ignore */ }
-        try { sessionStorage.removeItem('token'); } catch { /* ignore */ }
+      .then((data) => {
+        if (data && data._id) {
+          setUser(data);
+        } else {
+          // Unexpected response shape — clear auth state
+          try { localStorage.removeItem('token'); } catch { /* ignore */ }
+          try { sessionStorage.removeItem('token'); } catch { /* ignore */ }
+          setUser(null);
+        }
+      })
+      .catch((err: any) => {
+        // Only clear token on auth errors (401/403), not on transient network failures
+        if (err?.status === 401 || err?.status === 403) {
+          try { localStorage.removeItem('token'); } catch { /* ignore */ }
+          try { sessionStorage.removeItem('token'); } catch { /* ignore */ }
+        }
         setUser(null);
       })
       .finally(() => setLoading(false));

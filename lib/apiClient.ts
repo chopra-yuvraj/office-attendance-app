@@ -5,16 +5,27 @@
 
 function getToken(): string | null {
   try {
-    return typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+    const t = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+    if (t) return t;
+  } catch { /* localStorage may be unavailable */ }
+  try {
+    return sessionStorage.getItem('token') ?? null;
   } catch {
-    // localStorage may be unavailable in private browsing or some iOS contexts
-    try {
-      return sessionStorage.getItem('token');
-    } catch {
-      return null;
-    }
+    return null;
   }
 }
+
+/** Build headers — only attach Authorization when a real token exists */
+function buildHeaders(extraHeaders?: Record<string, string>): Record<string, string> {
+  const headers: Record<string, string> = { ...extraHeaders };
+  const token = getToken();
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+  return headers;
+}
+
+let isRedirecting = false;
 
 async function handleResponse(res: Response) {
   if (res.ok) return res.json();
@@ -24,10 +35,15 @@ async function handleResponse(res: Response) {
   error.distanceMeters = err.distanceMeters;  // for geofence 422 errors
 
   // Handle expired JWT — clear token and redirect to login
-  if (res.status === 401) {
-    try { localStorage.removeItem('token'); } catch { /* ignore */ }
-    try { sessionStorage.removeItem('token'); } catch { /* ignore */ }
-    if (typeof window !== 'undefined') {
+  // But don't redirect if we're already on /login or if this was the login request itself
+  if (res.status === 401 && typeof window !== 'undefined') {
+    const isLoginPage = window.location.pathname === '/login';
+    const isLoginRequest = res.url?.includes('/api/auth/login');
+
+    if (!isLoginPage && !isLoginRequest && !isRedirecting) {
+      isRedirecting = true;
+      try { localStorage.removeItem('token'); } catch { /* ignore */ }
+      try { sessionStorage.removeItem('token'); } catch { /* ignore */ }
       window.location.href = '/login';
     }
   }
@@ -36,18 +52,19 @@ async function handleResponse(res: Response) {
 }
 
 export const apiGet = (url: string) =>
-  fetch(url, { headers: { Authorization: `Bearer ${getToken()}` } }).then(handleResponse);
+  fetch(url, { headers: buildHeaders() }).then(handleResponse);
 
 export const apiPost = (url: string, body: object) =>
   fetch(url, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${getToken()}` },
+    headers: buildHeaders({ 'Content-Type': 'application/json' }),
     body: JSON.stringify(body),
   }).then(handleResponse);
 
 export const apiPut = (url: string, body: object) =>
   fetch(url, {
     method: 'PUT',
-    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${getToken()}` },
+    headers: buildHeaders({ 'Content-Type': 'application/json' }),
     body: JSON.stringify(body),
   }).then(handleResponse);
+

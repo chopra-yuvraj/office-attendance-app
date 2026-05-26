@@ -2,10 +2,18 @@ import { jwtVerify } from 'jose';
 import { NextRequest, NextResponse } from 'next/server';
 
 const ADMIN_PATHS = ['/api/admin'];
-const AUTH_PATHS  = ['/api/punch', '/api/leave', '/api/upload'];
+
+/** Paths that require a valid JWT but are NOT admin-only */
+const PUBLIC_API_PATHS = ['/api/auth/login'];
 
 export async function middleware(req: NextRequest) {
-  const token = req.headers.get('authorization')?.replace('Bearer ', '');
+  // Skip JWT check for public API endpoints (login doesn't need a token)
+  if (PUBLIC_API_PATHS.some(p => req.nextUrl.pathname.startsWith(p))) {
+    return NextResponse.next();
+  }
+
+  const raw = req.headers.get('authorization') ?? '';
+  const token = raw.startsWith('Bearer ') ? raw.slice(7) : '';
   if (!token) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
   const secret = new TextEncoder().encode(process.env.JWT_SECRET!);
@@ -25,4 +33,12 @@ export async function middleware(req: NextRequest) {
   }
 }
 
-export const config = { matcher: ['/api/admin/:path*', '/api/punch/:path*', '/api/leave/:path*', '/api/upload/:path*'] };
+export const config = {
+  matcher: [
+    '/api/admin/:path*',
+    '/api/auth/me',
+    '/api/punch/:path*',
+    '/api/leave/:path*',
+    '/api/upload/:path*',
+  ],
+};
