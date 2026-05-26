@@ -1,13 +1,22 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import useSWR from 'swr';
 import { apiGet } from '@/lib/apiClient';
 import ProductionLogTable from '@/components/admin/ProductionLogTable';
 import { TableSkeleton } from '@/components/shared/LoadingSkeleton';
 
 export default function ProductionPage() {
-  const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
-  const { data, isLoading } = useSWR(`/api/admin/production?date=${date}`, apiGet);
+  const [date, setDate] = useState('');
+  
+  // Enforce IST on the client side to avoid SSR UTC mismatch
+  useEffect(() => {
+    const d = new Date();
+    const istOffset = 5.5 * 60 * 60 * 1000;
+    const istTime = new Date(d.getTime() + istOffset);
+    setDate(istTime.toISOString().split('T')[0]);
+  }, []);
+
+  const { data, isLoading } = useSWR(date ? `/api/admin/production?date=${date}` : null, apiGet);
 
   return (
     <div className="flex flex-col gap-6">

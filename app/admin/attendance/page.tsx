@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAttendance } from '@/hooks/useAttendance';
 import AdminDashboardTable from '@/components/admin/AdminDashboardTable';
 import AdminCorrectionModal from '@/components/admin/AdminCorrectionModal';
@@ -9,11 +9,19 @@ import { TableSkeleton } from '@/components/shared/LoadingSkeleton';
 import { apiPost, apiPut } from '@/lib/apiClient';
 
 export default function AttendancePage() {
-  const [date,   setDate]   = useState(new Date().toISOString().split('T')[0]);
+  const [date,   setDate]   = useState('');
   const [status, setStatus] = useState('');
   const [correcting, setCorrecting] = useState<any>(null);
   const [confirming, setConfirming] = useState<{ recordId: string; warning: string } | null>(null);
   const [auditRecord, setAuditRecord] = useState<any>(null);
+
+  // Enforce IST on the client side to avoid SSR UTC mismatch
+  useEffect(() => {
+    const d = new Date();
+    const istOffset = 5.5 * 60 * 60 * 1000;
+    const istTime = new Date(d.getTime() + istOffset);
+    setDate(istTime.toISOString().split('T')[0]);
+  }, []);
 
   const { data, mutate, isLoading } = useAttendance(date, status);
 

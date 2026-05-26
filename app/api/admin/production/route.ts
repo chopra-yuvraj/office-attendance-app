@@ -19,7 +19,12 @@ export async function GET(req: Request) {
   const skip   = (page - 1) * limit;
 
   const query: Record<string, unknown> = {};
-  if (date)   query.date   = normalizeToMidnightUTC(new Date(date));
+  if (date) {
+    const queryDate = new Date(date); // 2026-05-27T00:00:00Z
+    const startOfDay = new Date(queryDate.getTime() - (5.5 * 60 * 60 * 1000)); // 2026-05-26T18:30:00.000Z
+    const endOfDay = new Date(startOfDay.getTime() + (24 * 60 * 60 * 1000) - 1); // 2026-05-27T18:29:59.999Z
+    query.date = { $gte: startOfDay, $lte: endOfDay };
+  }
   if (userId) query.userId = new mongoose.Types.ObjectId(userId);
   if (status) query.status = status;
 

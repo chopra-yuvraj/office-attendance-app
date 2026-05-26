@@ -13,11 +13,13 @@ export async function POST(req: Request) {
   const userId = req.headers.get('x-user-id')!;
 
   // Determine punch type: explicit from body, or infer from context
-  // 'selfie_in' → IN, 'selfie_out' → OUT, 'machine_N' → OUT (factory out flow)
+  // 'selfie_in' → IN, 'selfie_out' → OUT, 'machine_N' → PRODUCTION
   let punchType = 'IN';
   if (rawPunchType) {
     punchType = rawPunchType.toUpperCase();
-  } else if (context?.includes('out') || context?.startsWith('machine_')) {
+  } else if (context?.startsWith('machine_')) {
+    punchType = 'PRODUCTION';
+  } else if (context?.includes('out')) {
     punchType = 'OUT';
   }
 

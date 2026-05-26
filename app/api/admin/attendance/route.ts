@@ -20,7 +20,12 @@ export async function GET(req: Request) {
 
   // Build query filter
   const filter: Record<string, any> = {};
-  if (date)   filter.date   = normalizeToMidnightUTC(new Date(date));
+  if (date) {
+    const queryDate = new Date(date); // 2026-05-27T00:00:00Z
+    const startOfDay = new Date(queryDate.getTime() - (5.5 * 60 * 60 * 1000)); // 2026-05-26T18:30:00.000Z
+    const endOfDay = new Date(startOfDay.getTime() + (24 * 60 * 60 * 1000) - 1); // 2026-05-27T18:29:59.999Z
+    filter.date = { $gte: startOfDay, $lte: endOfDay };
+  }
   if (status) filter.status = status;
   if (userId) filter.userId = userId;
 

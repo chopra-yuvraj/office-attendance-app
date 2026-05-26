@@ -76,16 +76,17 @@ function getISTComponents() {
 
 /**
  * Upload an image to Google Drive using a 4-level folder hierarchy:
- *   Root > Year > Year-Month > Year-Month-Day > IN|OUT
+ *   Root > Year > Year-Month > Year-Month-Day > IN|OUT|PRODUCTION
  *
- * Files are named: WorkerName_IN_HH-MM-SS_YYYY-MM-DD.jpg
+ * Selfie files:  WorkerName_IN_HH-MM-SS_YYYY-MM-DD.jpg
+ * Machine files: WorkerName_Machine-1_HH-MM-SS_YYYY-MM-DD.jpg
  * The file is made publicly readable (view-only) after upload.
  *
  * @param base64Data  - Raw base64 or data URL prefixed base64 string
  * @param mimeType    - 'image/jpeg' | 'image/png'
  * @param workerName  - Display name of the worker (e.g. "Yuvraj")
- * @param punchType   - 'IN' or 'OUT'
- * @param context     - Upload context for filename prefix (e.g. 'selfie_in', 'machine_1')
+ * @param punchType   - 'IN', 'OUT', or 'PRODUCTION' (determines folder name)
+ * @param context     - Upload context (e.g. 'selfie_in', 'selfie_out', 'machine_1')
  */
 export async function uploadImageToDrive(
   base64Data: string,
@@ -106,8 +107,15 @@ export async function uploadImageToDrive(
   const safeName = workerName.replace(/[^a-zA-Z0-9_-]/g, '_');
   const normalizedPunchType = punchType.toUpperCase();
 
-  // Build filename: "Yuvraj_IN_09-30-00_2026-05-27.jpg"
-  const fileName = `${safeName}_${normalizedPunchType}_${timeString}_${dateString}.jpg`;
+  // Build filename label based on context
+  // Selfies: "Yuvraj_IN_09-30-00_2026-05-27.jpg"
+  // Machines: "Yuvraj_Machine-1_09-30-00_2026-05-27.jpg"
+  let fileLabel = normalizedPunchType; // default: IN or OUT
+  if (context?.startsWith('machine_')) {
+    const machineNum = context.replace('machine_', '');
+    fileLabel = `Machine-${machineNum}`;
+  }
+  const fileName = `${safeName}_${fileLabel}_${timeString}_${dateString}.jpg`;
 
   // --- Build 4-tier folder hierarchy ---
   // Root > 2026 > 2026-05 > 2026-05-27 > IN
