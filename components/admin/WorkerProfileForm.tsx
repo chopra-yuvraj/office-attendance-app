@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { apiPost, apiPut } from '@/lib/apiClient';
 import { Toast } from '@/components/shared/Toast';
 
@@ -17,9 +17,11 @@ const PROFILE_FIELDS = [
 interface Props {
   workerId?: string;  // If editing existing worker
   initialData?: Record<string, string>;
+  onSaved?: () => void;   // Callback after successful create/update
+  onCancel?: () => void;  // Callback to clear selection & return to create mode
 }
 
-export default function WorkerProfileForm({ workerId, initialData }: Props) {
+export default function WorkerProfileForm({ workerId, initialData, onSaved, onCancel }: Props) {
   const [formData, setFormData] = useState<Record<string, string>>(initialData || {});
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -28,6 +30,14 @@ export default function WorkerProfileForm({ workerId, initialData }: Props) {
   // J18: Reset Password
   const [showReset, setShowReset] = useState(false);
   const [newPassword, setNewPassword] = useState('');
+
+  // Sync form when the parent changes the selected worker
+  useEffect(() => {
+    setFormData(initialData || {});
+    setError('');
+    setShowReset(false);
+    setNewPassword('');
+  }, [workerId, initialData]);
 
   const updateField = (field: string) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) =>
     setFormData(prev => ({ ...prev, [field]: e.target.value }));
@@ -57,6 +67,7 @@ export default function WorkerProfileForm({ workerId, initialData }: Props) {
         setToast({ message: 'Worker created successfully', type: 'success' });
         setFormData({});
       }
+      onSaved?.();
     } catch (err: any) {
       setError(err.message ?? 'Failed to save profile');
     } finally {
@@ -72,6 +83,7 @@ export default function WorkerProfileForm({ workerId, initialData }: Props) {
       setNewPassword('');
       setShowReset(false);
       setToast({ message: 'Password reset successfully', type: 'success' });
+      onSaved?.();
     } catch (err: any) {
       setToast({ message: err.message, type: 'error' });
     }
@@ -80,9 +92,26 @@ export default function WorkerProfileForm({ workerId, initialData }: Props) {
   return (
     <>
       <form onSubmit={handleSubmit} className="bg-white rounded-2xl shadow p-6 flex flex-col gap-4 max-w-2xl">
-        <h2 className="text-lg font-bold text-slate-700">
-          {workerId ? 'Edit Worker Profile' : 'Create Worker Profile'}
-        </h2>
+        <div className="flex items-center justify-between">
+          <h2 className="text-lg font-bold text-slate-700">
+            {workerId ? 'Edit Worker Profile' : 'Create Worker Profile'}
+          </h2>
+          {workerId && onCancel && (
+            <button
+              type="button"
+              onClick={onCancel}
+              className="text-sm font-medium text-slate-500 hover:text-slate-700 border border-slate-300 rounded-lg px-3 py-1.5 hover:bg-slate-50 transition"
+            >
+              ✕ Cancel Edit
+            </button>
+          )}
+        </div>
+
+        {workerId && (
+          <p className="text-xs text-blue-600 bg-blue-50 border border-blue-200 rounded-lg px-3 py-2">
+            ✏️ Editing worker. Change any field and click Save Profile. Leave Password blank to keep current.
+          </p>
+        )}
 
         {error && <div className="bg-red-50 border border-red-200 text-red-700 text-sm rounded-lg px-4 py-2">{error}</div>}
 
@@ -119,12 +148,12 @@ export default function WorkerProfileForm({ workerId, initialData }: Props) {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="flex flex-col gap-1">
             <label className="text-sm font-medium text-slate-600">Contact 1 Name</label>
-            <input type="text" required value={formData.contact1Name || ''} onChange={updateField('contact1Name')}
+            <input type="text" required={!workerId} value={formData.contact1Name || ''} onChange={updateField('contact1Name')}
               className="border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none w-full" />
           </div>
           <div className="flex flex-col gap-1">
             <label className="text-sm font-medium text-slate-600">Contact 1 Mobile</label>
-            <input type="tel" required value={formData.contact1Mobile || ''} onChange={updateField('contact1Mobile')}
+            <input type="tel" required={!workerId} value={formData.contact1Mobile || ''} onChange={updateField('contact1Mobile')}
               className="border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none w-full" />
           </div>
           <div className="flex flex-col gap-1">

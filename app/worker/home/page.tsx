@@ -30,6 +30,7 @@ export default function WorkerHomePage() {
       <PunchCard
         punchRecord={data?.record}
         userRole={user?.role || 'office'}
+        onPunchSuccess={() => mutate()}
       />
     </div>
   );

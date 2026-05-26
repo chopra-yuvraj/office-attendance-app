@@ -2,7 +2,13 @@
 import PunchButton from './PunchButton';
 import FactoryOutPunchScreen from './FactoryOutPunchScreen';
 
-export default function PunchCard({ punchRecord, userRole }: { punchRecord: any; userRole: string }) {
+interface Props {
+  punchRecord: any;
+  userRole: string;
+  onPunchSuccess?: () => void;
+}
+
+export default function PunchCard({ punchRecord, userRole, onPunchSuccess }: Props) {
   const hasPunchedIn  = !!punchRecord?.inPunch;
   const hasPunchedOut = !!punchRecord?.outPunch;
 
@@ -37,11 +43,11 @@ export default function PunchCard({ punchRecord, userRole }: { punchRecord: any;
       )}
 
       {/* Action Buttons — factory workers use FactoryOutPunchScreen for OUT */}
-      {!hasPunchedIn  && <PunchButton type="IN" userRole={userRole} recordId={null} />}
+      {!hasPunchedIn  && <PunchButton type="IN" userRole={userRole} recordId={null} onSuccess={onPunchSuccess} />}
       {hasPunchedIn && !hasPunchedOut && (
         userRole === 'factory'
-          ? <FactoryOutPunchScreen />
-          : <PunchButton type="OUT" userRole={userRole} recordId={punchRecord._id} />
+          ? <FactoryOutPunchScreen onSuccess={onPunchSuccess} />
+          : <PunchButton type="OUT" userRole={userRole} recordId={punchRecord._id} onSuccess={onPunchSuccess} />
       )}
     </div>
   );
