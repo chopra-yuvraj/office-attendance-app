@@ -1,20 +1,24 @@
 import { google } from 'googleapis';
 import { Readable } from 'stream';
 
-const SCOPES = ['https://www.googleapis.com/auth/drive'];
 const FOLDER_ID = process.env.GOOGLE_DRIVE_FOLDER_ID!;
 
+/**
+ * Create an OAuth2 client authenticated with a long-lived refresh token.
+ * This lets the app upload files as the personal Gmail user (using their quota)
+ * instead of a Service Account (which has zero quota on free Gmail).
+ */
 function getAuthClient() {
-  const credentials = JSON.parse(
-    Buffer.from(process.env.GOOGLE_SERVICE_ACCOUNT_KEY!, 'base64').toString('utf-8')
+  const oauth2Client = new google.auth.OAuth2(
+    process.env.GOOGLE_CLIENT_ID,
+    process.env.GOOGLE_CLIENT_SECRET,
   );
-  return new google.auth.GoogleAuth({
-    credentials,
-    scopes: SCOPES,
-    clientOptions: {
-      subject: process.env.GOOGLE_IMPERSONATE_EMAIL!, // Impersonate this Gmail user so files count against their quota
-    },
+
+  oauth2Client.setCredentials({
+    refresh_token: process.env.GOOGLE_REFRESH_TOKEN,
   });
+
+  return oauth2Client;
 }
 
 /**
