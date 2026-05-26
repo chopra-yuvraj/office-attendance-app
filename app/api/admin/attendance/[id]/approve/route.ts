@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic';
 import { connectDB } from '@/lib/db';
 import { getAuthUserId } from '@/lib/auth';
 import { approveAttendanceRecord, forceApproveAttendanceRecord } from '@/lib/approvalPipeline';

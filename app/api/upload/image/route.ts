@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic';
 import { uploadImageToDrive } from '@/lib/googleDrive';
 import { NextResponse } from 'next/server';
 

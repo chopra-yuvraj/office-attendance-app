@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic';
 import { SignJWT } from 'jose';
 import bcrypt from 'bcryptjs';
 import { connectDB } from '@/lib/db';

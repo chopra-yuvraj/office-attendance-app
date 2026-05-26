@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic';
 import { connectDB } from '@/lib/db';
 import AttendanceRecord from '@/models/AttendanceRecord';
 import { normalizeToMidnightUTC } from '@/lib/auth';

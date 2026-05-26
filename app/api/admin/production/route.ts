@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic';
 import { connectDB } from '@/lib/db';
 import ProductionLog from '@/models/ProductionLog';
 import { normalizeToMidnightUTC } from '@/lib/auth';
