@@ -11,9 +11,9 @@ function getAuthClient() {
   return new google.auth.GoogleAuth({
     credentials,
     scopes: SCOPES,
-    clientOptions: process.env.GOOGLE_IMPERSONATE_EMAIL
-      ? { subject: process.env.GOOGLE_IMPERSONATE_EMAIL }
-      : undefined,
+    clientOptions: {
+      subject: process.env.GOOGLE_IMPERSONATE_EMAIL!, // Impersonate this Gmail user so files count against their quota
+    },
   });
 }
 
