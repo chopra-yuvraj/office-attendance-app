@@ -8,7 +8,13 @@ function getAuthClient() {
   const credentials = JSON.parse(
     Buffer.from(process.env.GOOGLE_SERVICE_ACCOUNT_KEY!, 'base64').toString('utf-8')
   );
-  return new google.auth.GoogleAuth({ credentials, scopes: SCOPES });
+  return new google.auth.GoogleAuth({
+    credentials,
+    scopes: SCOPES,
+    clientOptions: process.env.GOOGLE_IMPERSONATE_EMAIL
+      ? { subject: process.env.GOOGLE_IMPERSONATE_EMAIL }
+      : undefined,
+  });
 }
 
 /**
