@@ -127,6 +127,12 @@ export default function AttendanceHistoryDrawer({ workerId, workerName, onClose 
                   const punchOut = r.outPunch?.timestamp
                     ? new Date(r.outPunch.timestamp).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })
                     : '—';
+                  const inMapsUrl = r.inPunch?.coords?.lat && r.inPunch?.coords?.lng
+                    ? `https://www.google.com/maps/search/?api=1&query=${r.inPunch.coords.lat},${r.inPunch.coords.lng}`
+                    : null;
+                  const outMapsUrl = r.outPunch?.coords?.lat && r.outPunch?.coords?.lng
+                    ? `https://www.google.com/maps/search/?api=1&query=${r.outPunch.coords.lat},${r.outPunch.coords.lng}`
+                    : null;
                   const hours = r.totalWorkedMinutes != null
                     ? `${Math.floor(r.totalWorkedMinutes / 60)}h ${r.totalWorkedMinutes % 60}m`
                     : '—';
@@ -137,8 +143,42 @@ export default function AttendanceHistoryDrawer({ workerId, workerName, onClose 
                       <td className="px-5 py-3 whitespace-nowrap">
                         <StatusBadge flag={r.hoursFlag} status={r.status} hasInPunch={!!r.inPunch} />
                       </td>
-                      <td className="px-5 py-3 text-slate-600 whitespace-nowrap">{punchIn}</td>
-                      <td className="px-5 py-3 text-slate-600 whitespace-nowrap">{punchOut}</td>
+                      <td className="px-5 py-3 text-slate-600 whitespace-nowrap">
+                        <div className="flex items-center gap-1">
+                          <span>{punchIn}</span>
+                          {inMapsUrl ? (
+                            <a
+                              href={inMapsUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-flex items-center justify-center w-5 h-5 rounded bg-emerald-50 text-emerald-600 hover:bg-emerald-100 transition"
+                              title="View IN location"
+                            >
+                              <span className="text-xs leading-none">📍</span>
+                            </a>
+                          ) : r.inPunch ? (
+                            <span className="text-[9px] text-slate-300">N/A</span>
+                          ) : null}
+                        </div>
+                      </td>
+                      <td className="px-5 py-3 text-slate-600 whitespace-nowrap">
+                        <div className="flex items-center gap-1">
+                          <span>{punchOut}</span>
+                          {outMapsUrl ? (
+                            <a
+                              href={outMapsUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-flex items-center justify-center w-5 h-5 rounded bg-emerald-50 text-emerald-600 hover:bg-emerald-100 transition"
+                              title="View OUT location"
+                            >
+                              <span className="text-xs leading-none">📍</span>
+                            </a>
+                          ) : r.outPunch ? (
+                            <span className="text-[9px] text-slate-300">N/A</span>
+                          ) : null}
+                        </div>
+                      </td>
                       <td className="px-5 py-3 whitespace-nowrap">
                         <span className={`font-medium ${
                           r.hoursFlag === 'full_day' ? 'text-green-600' :

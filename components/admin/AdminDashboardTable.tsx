@@ -32,6 +32,12 @@ function getDriveThumbnailUrl(punch: { driveFileId?: string; driveWebViewLink?: 
   return null;
 }
 
+/** Build a Google Maps search URL from stored punch coordinates */
+function getGoogleMapsUrl(punch: { coords?: { lat?: number; lng?: number } } | null): string | null {
+  if (!punch?.coords?.lat || !punch?.coords?.lng) return null;
+  return `https://www.google.com/maps/search/?api=1&query=${punch.coords.lat},${punch.coords.lng}`;
+}
+
 export default function AdminDashboardTable({ records, onApprove, onCorrect, onViewAudit }: Props) {
   const [viewingPhoto, setViewingPhoto] = useState<{ url: string; label: string } | null>(null);
 
@@ -59,13 +65,15 @@ export default function AdminDashboardTable({ records, onApprove, onCorrect, onV
             {records.map((rec, i) => {
               const inPhotoUrl = getDriveThumbnailUrl(rec.inPunch);
               const outPhotoUrl = getDriveThumbnailUrl(rec.outPunch);
+              const inMapsUrl = getGoogleMapsUrl(rec.inPunch);
+              const outMapsUrl = getGoogleMapsUrl(rec.outPunch);
 
               return (
                 <tr key={rec._id} className={i % 2 === 0 ? 'bg-white' : 'bg-slate-50'}>
                   <td className="px-4 py-3 font-medium text-slate-800">{rec.userId?.fullName ?? '—'}</td>
                   <td className="px-4 py-3 text-slate-600">{new Date(rec.date).toLocaleDateString()}</td>
 
-                  {/* IN Time with photo icon */}
+                  {/* IN Time with photo + location icons */}
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-1.5">
                       <span>{rec.inPunch ? new Date(rec.inPunch.timestamp).toLocaleTimeString() : '—'}</span>
@@ -80,10 +88,23 @@ export default function AdminDashboardTable({ records, onApprove, onCorrect, onV
                           </svg>
                         </button>
                       )}
+                      {inMapsUrl ? (
+                        <a
+                          href={inMapsUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center justify-center w-6 h-6 rounded-md bg-emerald-50 text-emerald-600 hover:bg-emerald-100 transition"
+                          title="View IN location on Google Maps"
+                        >
+                          <span className="text-sm leading-none">📍</span>
+                        </a>
+                      ) : rec.inPunch ? (
+                        <span className="text-[10px] text-slate-400" title="No location data">N/A</span>
+                      ) : null}
                     </div>
                   </td>
 
-                  {/* OUT Time with photo icon */}
+                  {/* OUT Time with photo + location icons */}
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-1.5">
                       <span>{rec.outPunch ? new Date(rec.outPunch.timestamp).toLocaleTimeString() : '—'}</span>
@@ -98,6 +119,19 @@ export default function AdminDashboardTable({ records, onApprove, onCorrect, onV
                           </svg>
                         </button>
                       )}
+                      {outMapsUrl ? (
+                        <a
+                          href={outMapsUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center justify-center w-6 h-6 rounded-md bg-emerald-50 text-emerald-600 hover:bg-emerald-100 transition"
+                          title="View OUT location on Google Maps"
+                        >
+                          <span className="text-sm leading-none">📍</span>
+                        </a>
+                      ) : rec.outPunch ? (
+                        <span className="text-[10px] text-slate-400" title="No location data">N/A</span>
+                      ) : null}
                     </div>
                   </td>
 

@@ -14,10 +14,9 @@ interface Props {
 }
 
 export default function PunchButton({ type, userRole, recordId, onSuccess }: Props) {
-  const [step, setStep] = useState<'idle' | 'camera' | 'geo' | 'submitting' | 'done' | 'error' | 'geo_error' | 'offline_cached'>('idle');
+  const [step, setStep] = useState<'idle' | 'camera' | 'geo' | 'submitting' | 'done' | 'error' | 'offline_cached'>('idle');
   const [selfieBase64, setSelfieBase64] = useState<string | null>(null);
   const [error, setError] = useState('');
-  const [geoError, setGeoError] = useState('');
 
   if (step === 'camera') return (
     <CameraCapture
@@ -62,12 +61,6 @@ export default function PunchButton({ type, userRole, recordId, onSuccess }: Pro
       setStep('done');
       onSuccess?.();
     } catch (err: any) {
-      // 5. Handle geofence rejection (J22)
-      if (err.status === 422) {
-        setGeoError(`Location outside permitted zone${err.distanceMeters ? ` (${Math.round(err.distanceMeters)}m away)` : ''}. Contact admin.`);
-        setStep('geo_error');
-        return;
-      }
       // 6. Handle offline: cache and show banner
       if (typeof navigator !== 'undefined' && !navigator.onLine) {
         const punchPayload = {
@@ -98,13 +91,7 @@ export default function PunchButton({ type, userRole, recordId, onSuccess }: Pro
     </div>
   );
 
-  if (step === 'geo_error') return (
-    <div className="bg-red-50 border border-red-200 rounded-xl p-4 text-center">
-      <p className="text-red-600 text-sm font-medium">📍 Geofence Error</p>
-      <p className="text-xs text-red-400 mt-1">{geoError}</p>
-      <button onClick={() => setStep('idle')} className="mt-3 text-xs text-blue-600 underline">Try Again</button>
-    </div>
-  );
+
 
   if (step === 'offline_cached') return (
     <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 text-center">

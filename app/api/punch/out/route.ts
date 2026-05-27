@@ -4,8 +4,6 @@ import AttendanceRecord from '@/models/AttendanceRecord';
 import ProductionLog from '@/models/ProductionLog';
 import User from '@/models/User';
 import { getAuthUserId, normalizeToMidnightUTC } from '@/lib/auth';
-import { isWithinGeofence } from '@/lib/geofence';
-import { OFFICE_ZONES, FACTORY_ZONES } from '@/lib/geofenceZones';
 import { NextResponse } from 'next/server';
 
 // POST - Submit OUT punch
@@ -42,16 +40,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'No IN punch found for today' }, { status: 400 });
   }
 
-  // Server-side geofence validation
-  const zones = user.role === 'office' ? OFFICE_ZONES : FACTORY_ZONES;
-  const geoResult = isWithinGeofence(body.outPunch.coords.lat, body.outPunch.coords.lng, zones);
-
-  if (!geoResult.valid) {
-    return NextResponse.json({
-      error: 'Punch rejected: location outside permitted zone',
-      distanceMeters: geoResult.distanceMeters,
-    }, { status: 422 });
-  }
+  // Location is captured but NOT enforced — admin reviews location in dashboard
 
   // Validate factory completeness
   if (user.role === 'factory') {
