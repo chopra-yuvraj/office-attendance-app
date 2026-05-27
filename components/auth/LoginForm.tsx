@@ -41,7 +41,7 @@ export default function LoginForm() {
         onSubmit={handleSubmit}
         className="bg-white w-full max-w-sm rounded-2xl shadow-lg p-8 flex flex-col gap-5"
       >
-        <h1 className="text-2xl font-bold text-slate-800 text-center">WorkForce Login</h1>
+        <h1 className="text-2xl font-bold text-slate-800 text-center">Chopra Creations Login</h1>
 
         {error && (
           <div className="bg-red-50 border border-red-200 text-red-700 text-sm rounded-lg px-4 py-2">

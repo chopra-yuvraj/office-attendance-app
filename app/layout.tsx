@@ -15,13 +15,13 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "WorkForce - Attendance & Production",
+  title: "Chopra Creations - Attendance & Production",
   description: "Enterprise attendance and production tracking application",
   manifest: "/manifest.webmanifest",
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
-    title: "WorkForce App",
+    title: "Chopra Creations App",
   },
   formatDetection: {
     telephone: false,

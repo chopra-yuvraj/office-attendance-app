@@ -2,8 +2,8 @@ import type { MetadataRoute } from 'next';
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: 'WorkForce App',
-    short_name: 'WorkForce',
+    name: 'Chopra Creations App',
+    short_name: 'Chopra Creations',
     description: 'Enterprise attendance and production tracking application',
     start_url: '/',
     display: 'standalone',
