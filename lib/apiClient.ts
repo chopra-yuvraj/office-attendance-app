@@ -68,3 +68,9 @@ export const apiPut = (url: string, body: object) =>
     body: JSON.stringify(body),
   }).then(handleResponse);
 
+export const apiDelete = (url: string) =>
+  fetch(url, {
+    method: 'DELETE',
+    headers: buildHeaders(),
+  }).then(handleResponse);
+

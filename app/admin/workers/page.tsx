@@ -3,7 +3,7 @@ import { useState, useCallback } from 'react';
 import useSWR from 'swr';
 import WorkerProfileForm from '@/components/admin/WorkerProfileForm';
 import AttendanceHistoryDrawer from '@/components/admin/AttendanceHistoryDrawer';
-import { apiGet } from '@/lib/apiClient';
+import { apiGet, apiPut, apiDelete } from '@/lib/apiClient';
 
 interface Worker {
   _id: string;
@@ -27,6 +27,9 @@ export default function AdminWorkersPage() {
   const [loadingDetail, setLoadingDetail] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [historyWorker, setHistoryWorker] = useState<{ _id: string; fullName: string } | null>(null);
+  const [deactivating, setDeactivating] = useState<{ _id: string; fullName: string; isActive: boolean } | null>(null);
+  const [actionLoading, setActionLoading] = useState(false);
+  const [showInactive, setShowInactive] = useState(false);
 
   // When "Edit" is clicked, fetch full (decrypted) worker details from the /api/admin/users/:id endpoint
   const handleEdit = useCallback(async (worker: Worker) => {
@@ -53,6 +56,27 @@ export default function AdminWorkersPage() {
     mutate(); // Refresh the worker list
   }, [mutate]);
 
+  // Feature 3: Deactivate/Reactivate worker
+  async function handleDeactivateConfirm() {
+    if (!deactivating) return;
+    setActionLoading(true);
+    try {
+      if (deactivating.isActive) {
+        // Deactivate
+        await apiDelete(`/api/admin/users/${deactivating._id}`);
+      } else {
+        // Reactivate
+        await apiPut(`/api/admin/users/${deactivating._id}`, { isActive: true });
+      }
+      mutate();
+    } catch (err) {
+      console.error('Worker status change failed', err);
+    } finally {
+      setActionLoading(false);
+      setDeactivating(null);
+    }
+  }
+
   // Build initialData record for the form from the selected worker
   function buildFormData(w: Worker): Record<string, string> {
     const d: Record<string, string> = {
@@ -78,6 +102,8 @@ export default function AdminWorkersPage() {
 
   const workers: Worker[] = data?.users ?? [];
   const filtered = workers.filter(w => {
+    // Filter by active/inactive toggle
+    if (!showInactive && !w.isActive) return false;
     if (!searchTerm) return true;
     const q = searchTerm.toLowerCase();
     return w.fullName.toLowerCase().includes(q)
@@ -102,20 +128,32 @@ export default function AdminWorkersPage() {
       <section className="bg-white rounded-2xl shadow overflow-hidden">
         <div className="p-5 border-b border-slate-200 flex flex-col sm:flex-row sm:items-center gap-3">
           <h2 className="text-lg font-bold text-slate-700 flex-1">
-            Active Workers
-            {data && <span className="ml-2 text-sm font-normal text-slate-400">({data.total ?? workers.length})</span>}
+            Workers
+            {data && <span className="ml-2 text-sm font-normal text-slate-400">({filtered.length})</span>}
           </h2>
-          <div className="relative">
-            <input
-              type="text"
-              value={searchTerm}
-              onChange={e => setSearchTerm(e.target.value)}
-              placeholder="Search by name, username, or mobile…"
-              className="border border-slate-300 rounded-lg pl-9 pr-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none w-full sm:w-72"
-            />
-            <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-            </svg>
+          <div className="flex items-center gap-3">
+            {/* Show inactive toggle */}
+            <label className="flex items-center gap-2 text-sm text-slate-500 cursor-pointer select-none">
+              <input
+                type="checkbox"
+                checked={showInactive}
+                onChange={e => setShowInactive(e.target.checked)}
+                className="rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+              />
+              Show Inactive
+            </label>
+            <div className="relative">
+              <input
+                type="text"
+                value={searchTerm}
+                onChange={e => setSearchTerm(e.target.value)}
+                placeholder="Search by name, username, or mobile…"
+                className="border border-slate-300 rounded-lg pl-9 pr-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none w-full sm:w-72"
+              />
+              <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+            </div>
           </div>
         </div>
 
@@ -165,7 +203,9 @@ export default function AdminWorkersPage() {
                 {filtered.map(w => (
                   <tr
                     key={w._id}
-                    className={`transition hover:bg-blue-50/50 ${selectedWorker?._id === w._id ? 'bg-blue-50 ring-1 ring-inset ring-blue-200' : ''}`}
+                    className={`transition hover:bg-blue-50/50 ${
+                      selectedWorker?._id === w._id ? 'bg-blue-50 ring-1 ring-inset ring-blue-200' : ''
+                    } ${!w.isActive ? 'opacity-60' : ''}`}
                   >
                     <td className="px-5 py-3 font-medium text-slate-800 whitespace-nowrap">{w.fullName}</td>
                     <td className="px-5 py-3 text-slate-600 whitespace-nowrap">{w.username}</td>
@@ -205,6 +245,31 @@ export default function AdminWorkersPage() {
                           </svg>
                           History
                         </button>
+                        {/* Feature 3: Deactivate/Reactivate */}
+                        <button
+                          onClick={() => setDeactivating({ _id: w._id, fullName: w.fullName, isActive: w.isActive })}
+                          className={`inline-flex items-center gap-1 text-sm font-medium px-3 py-1.5 rounded-lg transition ${
+                            w.isActive
+                              ? 'text-red-500 hover:text-red-700 hover:bg-red-50'
+                              : 'text-green-600 hover:text-green-700 hover:bg-green-50'
+                          }`}
+                        >
+                          {w.isActive ? (
+                            <>
+                              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
+                              </svg>
+                              Deactivate
+                            </>
+                          ) : (
+                            <>
+                              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                              </svg>
+                              Reactivate
+                            </>
+                          )}
+                        </button>
                       </div>
                     </td>
                   </tr>
@@ -222,6 +287,49 @@ export default function AdminWorkersPage() {
           workerName={historyWorker.fullName}
           onClose={() => setHistoryWorker(null)}
         />
+      )}
+
+      {/* Feature 3: Deactivate Confirmation Modal */}
+      {deactivating && (
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-sm w-full p-6 flex flex-col gap-4">
+            <div className="flex items-center gap-3">
+              <span className="text-3xl">{deactivating.isActive ? '⚠️' : '✅'}</span>
+              <h2 className="text-lg font-bold text-slate-800">
+                {deactivating.isActive ? 'Deactivate Worker' : 'Reactivate Worker'}
+              </h2>
+            </div>
+            <p className="text-sm text-slate-600">
+              {deactivating.isActive
+                ? <>Are you sure you want to deactivate <strong>{deactivating.fullName}</strong>? They will no longer be able to log in or punch attendance. Historical records will be preserved.</>
+                : <>Are you sure you want to reactivate <strong>{deactivating.fullName}</strong>? They will be able to log in and punch attendance again.</>
+              }
+            </p>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setDeactivating(null)}
+                disabled={actionLoading}
+                className="flex-1 border border-slate-300 rounded-lg py-2 text-sm text-slate-600 hover:bg-slate-50 disabled:opacity-50"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleDeactivateConfirm}
+                disabled={actionLoading}
+                className={`flex-1 rounded-lg py-2 text-sm font-semibold text-white transition disabled:opacity-50 ${
+                  deactivating.isActive
+                    ? 'bg-red-600 hover:bg-red-700'
+                    : 'bg-green-600 hover:bg-green-700'
+                }`}
+              >
+                {actionLoading
+                  ? 'Processing…'
+                  : deactivating.isActive ? 'Deactivate' : 'Reactivate'
+                }
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

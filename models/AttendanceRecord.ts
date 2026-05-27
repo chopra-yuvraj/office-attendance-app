@@ -1,7 +1,7 @@
 import mongoose, { Schema, Document } from 'mongoose';
 
 export type PunchStatus = 'pending' | 'approved' | 'corrected';
-export type AttendanceFlag = 'full_day' | 'half_day_alert' | 'absent' | 'leave_approved';
+export type AttendanceFlag = 'full_day' | 'half_day_alert' | 'absent' | 'leave_approved' | 'overtime';
 
 export interface IPunchData {
   timestamp: Date;
@@ -57,7 +57,7 @@ const AttendanceRecordSchema = new Schema<IAttendanceRecord>({
   inPunch:             { type: PunchDataSchema, default: null },
   outPunch:            { type: PunchDataSchema, default: null },
   totalWorkedMinutes:  { type: Number, default: null },
-  hoursFlag:           { type: String, enum: ['full_day','half_day_alert','absent','leave_approved'], default: null },
+  hoursFlag:           { type: String, enum: ['full_day','half_day_alert','absent','leave_approved','overtime'], default: null },
   status:              { type: String, enum: ['pending','approved','corrected'], default: 'pending' },
   isManualEntry:       { type: Boolean, default: false },
   adminNotes:          { type: String, default: '' },

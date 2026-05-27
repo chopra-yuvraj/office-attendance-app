@@ -48,3 +48,17 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
 
   return NextResponse.json({ success: true, userId: user._id });
 }
+
+// DELETE - Soft-deactivate a worker (preserves historical attendance data)
+export async function DELETE(req: Request, { params }: { params: { id: string } }) {
+  await connectDB();
+
+  const user = await User.findById(params.id);
+  if (!user) return NextResponse.json({ error: 'User not found' }, { status: 404 });
+  if (user.role === 'admin') return NextResponse.json({ error: 'Cannot deactivate an admin' }, { status: 403 });
+
+  user.isActive = false;
+  await user.save();
+
+  return NextResponse.json({ success: true, userId: user._id, isActive: false });
+}

@@ -3,32 +3,81 @@ import ProductionLog from '@/models/ProductionLog';
 import { IUser } from '@/models/User';
 
 /**
- * Approve an attendance record. If the worker's hours are below the minimum,
- * returns a warning requiring explicit admin confirmation.
- * E9: Uses findOneAndUpdate with { status: 'pending' } filter to prevent double-approval race.
+ * Calculate the system-suggested hours flag based on worked minutes vs minimum hours.
+ * This is purely a suggestion — the admin can override it.
  */
-export async function approveAttendanceRecord(recordId: string, adminId: string) {
+export function calculateSuggestedFlag(
+  totalWorkedMinutes: number | null,
+  minDailyWorkHours: number,
+): string {
+  if (totalWorkedMinutes == null) return 'absent';
+  const minMinutes = minDailyWorkHours * 60;
+  if (totalWorkedMinutes >= minMinutes * 1.25) return 'overtime';
+  if (totalWorkedMinutes >= minMinutes) return 'full_day';
+  if (totalWorkedMinutes >= minMinutes * 0.5) return 'half_day_alert';
+  return 'absent';
+}
+
+/**
+ * Step 1: Prepare approval — calculate the suggested status and return it
+ * for the admin to review/override. Does NOT modify the record yet.
+ */
+export async function prepareApproval(recordId: string) {
   const record = await AttendanceRecord.findById(recordId).populate('userId');
   if (!record) throw new Error('Record not found');
   if (record.status === 'approved') throw new Error('Already approved');
 
   const user = record.userId as unknown as IUser;
+  const suggestedFlag = calculateSuggestedFlag(
+    record.totalWorkedMinutes,
+    user.minDailyWorkHours,
+  );
 
-  // --- Hours check ---
+  // Check if hours are below minimum for a warning
   const minMinutes = user.minDailyWorkHours * 60;
-  if (record.totalWorkedMinutes !== null && record.totalWorkedMinutes < minMinutes) {
-    return {
-      requiresConfirmation: true,
-      warning: `Worker logged ${record.totalWorkedMinutes} min vs required ${minMinutes} min. Approve anyway?`,
-      record,
-    };
-  }
+  const isShortHours = record.totalWorkedMinutes !== null && record.totalWorkedMinutes < minMinutes;
 
-  // E9: Atomic update — only approve if still pending (prevents race)
+  return {
+    suggestedFlag,
+    workerName: user.fullName,
+    workedMinutes: record.totalWorkedMinutes,
+    warning: isShortHours
+      ? `Worker logged ${record.totalWorkedMinutes} min vs required ${minMinutes} min.`
+      : undefined,
+    record,
+  };
+}
+
+/**
+ * Step 2: Execute approval with the admin's chosen override status.
+ * E9: Uses findOneAndUpdate with status filter for atomicity.
+ *
+ * @param recordId - The attendance record to approve
+ * @param adminId - The admin performing the approval
+ * @param overrideFlag - The final hours flag chosen by the admin (e.g. 'full_day', 'overtime')
+ */
+export async function executeApproval(
+  recordId: string,
+  adminId: string,
+  overrideFlag: string,
+) {
+  const record = await AttendanceRecord.findById(recordId).populate('userId');
+  if (!record) throw new Error('Record not found');
+
+  const user = record.userId as unknown as IUser;
+
+  // E9: Atomic update — only approve if still pending/corrected (prevents race)
   const updated = await AttendanceRecord.findOneAndUpdate(
     { _id: recordId, status: { $in: ['pending', 'corrected'] } },
-    { $set: { status: 'approved' } },
-    { new: true }
+    {
+      $set: {
+        status: 'approved',
+        hoursFlag: overrideFlag,
+        adminNotes: (record.adminNotes || '') +
+          ` [Approved by admin ${adminId} as ${overrideFlag}]`,
+      },
+    },
+    { new: true },
   );
 
   if (!updated) throw new Error('Record was already approved by another admin');
@@ -37,42 +86,20 @@ export async function approveAttendanceRecord(recordId: string, adminId: string)
   if (user.role === 'factory') {
     await ProductionLog.findOneAndUpdate(
       { attendanceRecordId: recordId },
-      { $set: { status: 'approved' } }
+      { $set: { status: 'approved' } },
     );
   }
 
-  return { requiresConfirmation: false, record: updated };
+  return { record: updated };
 }
 
-/**
- * Force-approve a record (admin has confirmed despite warnings).
- * E9: Uses findOneAndUpdate with status filter for atomicity.
- */
+// Legacy compatibility wrappers (unused by new code, kept for safety)
+export async function approveAttendanceRecord(recordId: string, adminId: string) {
+  const prep = await prepareApproval(recordId);
+  return executeApproval(recordId, adminId, prep.suggestedFlag);
+}
+
 export async function forceApproveAttendanceRecord(recordId: string, adminId: string) {
-  const record = await AttendanceRecord.findById(recordId).populate('userId');
-  if (!record) throw new Error('Record not found');
-
-  const user = record.userId as unknown as IUser;
-
-  const updated = await AttendanceRecord.findOneAndUpdate(
-    { _id: recordId, status: { $ne: 'approved' } },
-    {
-      $set: {
-        status: 'approved',
-        adminNotes: (record.adminNotes || '') + ` [Force-approved by admin ${adminId} despite hours alert]`,
-      }
-    },
-    { new: true }
-  );
-
-  if (!updated) throw new Error('Record was already approved by another admin');
-
-  if (user.role === 'factory') {
-    await ProductionLog.findOneAndUpdate(
-      { attendanceRecordId: recordId },
-      { $set: { status: 'approved' } }
-    );
-  }
-
-  return { requiresConfirmation: false, record: updated };
+  const prep = await prepareApproval(recordId);
+  return executeApproval(recordId, adminId, prep.suggestedFlag);
 }

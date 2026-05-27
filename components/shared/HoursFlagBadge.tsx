@@ -3,6 +3,7 @@ const FLAG_STYLES: Record<string, string> = {
   half_day_alert: 'bg-orange-100 text-orange-700',
   absent:         'bg-red-100 text-red-700',
   leave_approved: 'bg-purple-100 text-purple-700',
+  overtime:       'bg-blue-100 text-blue-700',
 };
 
 const FLAG_LABELS: Record<string, string> = {
@@ -10,6 +11,7 @@ const FLAG_LABELS: Record<string, string> = {
   half_day_alert: '⚠️ Short Hours',
   absent:         '❌ Absent',
   leave_approved: '🏖️ On Leave',
+  overtime:       '🔥 Overtime',
 };
 
 export function HoursFlagBadge({ flag }: { flag?: string }) {

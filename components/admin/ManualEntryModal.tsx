@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import { apiPost } from '@/lib/apiClient';
 
-const HOURS_FLAGS = ['full_day', 'half_day_alert', 'absent'];
+const HOURS_FLAGS = ['full_day', 'half_day_alert', 'absent', 'overtime'];
 
 export default function ManualEntryModal({ workers, onClose, onSuccess }: {
   workers: { _id: string; fullName: string }[];

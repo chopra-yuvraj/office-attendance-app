@@ -1,6 +1,7 @@
 import { google } from 'googleapis';
 import { Readable } from 'stream';
 import type { drive_v3 } from 'googleapis';
+import sharp from 'sharp';
 
 const ROOT_FOLDER_ID = process.env.GOOGLE_DRIVE_FOLDER_ID!;
 
@@ -124,9 +125,38 @@ export async function uploadImageToDrive(
   const dayFolderId   = await getOrCreateFolder(drive, dateString, monthFolderId);
   const finalFolderId = await getOrCreateFolder(drive, normalizedPunchType, dayFolderId);
 
-  // --- Upload the image ---
+  // --- Apply Watermark & Upload the image ---
   const base64 = base64Data.replace(/^data:image\/\w+;base64,/, '');
-  const buffer = Buffer.from(base64, 'base64');
+  let buffer = Buffer.from(base64, 'base64');
+
+  try {
+    const watermarkSvg = `
+      <svg width="360" height="110">
+        <rect x="0" y="0" width="360" height="110" fill="rgba(0, 0, 0, 0.65)" rx="5" ry="5" />
+        <text x="15" y="30" font-family="sans-serif" font-size="20" fill="white" font-weight="bold">
+          ${workerName}
+        </text>
+        <text x="15" y="60" font-family="sans-serif" font-size="18" fill="white">
+          Date: ${dateString} | Time: ${timeString}
+        </text>
+        <text x="15" y="90" font-family="sans-serif" font-size="18" fill="white">
+          Punch Type: ${normalizedPunchType}
+        </text>
+      </svg>
+    `;
+
+    buffer = await sharp(buffer)
+      .composite([
+        {
+          input: Buffer.from(watermarkSvg),
+          gravity: 'southeast',
+        }
+      ])
+      .toBuffer();
+  } catch (err) {
+    console.error('Failed to apply watermark, continuing with original image:', err);
+  }
+
   const stream = Readable.from(buffer);
 
   const response = await drive.files.create({

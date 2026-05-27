@@ -38,8 +38,6 @@ export default function WorkerProfilePage() {
         <div className="border-t border-slate-100 pt-4 flex flex-col gap-3">
           <ProfileRow label="Role" value={user.role.charAt(0).toUpperCase() + user.role.slice(1)} />
           <ProfileRow label="Mobile" value={user.mobile} />
-          <ProfileRow label="Min Daily Hours" value={`${user.minDailyWorkHours} hours`} />
-          <ProfileRow label="Salary Per Day" value={`₹${user.salaryPerDay}`} />
         </div>
       </div>
 
