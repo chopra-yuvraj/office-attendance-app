@@ -127,7 +127,7 @@ export async function uploadImageToDrive(
 
   // --- Apply Watermark & Upload the image ---
   const base64 = base64Data.replace(/^data:image\/\w+;base64,/, '');
-  let buffer = Buffer.from(base64, 'base64');
+  let buffer: any = Buffer.from(base64, 'base64');
 
   try {
     const watermarkSvg = `

@@ -43,13 +43,13 @@ export default function GeolocationCapture({ onCapture }: Props) {
   }, []); // Empty deps: fire once on mount only
 
   if (status === 'error') return (
-    <div className="bg-red-50 border border-red-200 rounded-xl p-4 text-center">
-      <p className="text-red-600 text-sm font-medium">📍 Location Error</p>
-      <p className="text-xs text-red-400 mt-1">{error}</p>
-      <p className="text-xs text-slate-500 mt-2">Please enable location permissions in your browser settings and try again.</p>
+    <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-4 text-center">
+      <p className="text-red-600 dark:text-red-400 text-sm font-medium">📍 Location Error</p>
+      <p className="text-xs text-red-400 dark:text-red-500 mt-1">{error}</p>
+      <p className="text-xs text-slate-500 dark:text-slate-400 mt-2">Please enable location permissions in your browser settings and try again.</p>
       <button
         onClick={() => { hasFired.current = false; setStatus('waiting'); setError(''); }}
-        className="mt-3 text-xs text-blue-600 underline font-medium"
+        className="mt-3 text-xs text-blue-600 dark:text-blue-400 underline font-medium"
       >
         🔄 Retry Location
       </button>
@@ -57,10 +57,10 @@ export default function GeolocationCapture({ onCapture }: Props) {
   );
 
   return (
-    <div className="flex flex-col items-center gap-3 p-4 bg-blue-50 rounded-xl">
-      <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin" />
-      <p className="text-sm text-blue-700 font-medium">Detecting your location…</p>
-      <p className="text-xs text-blue-400">Make sure GPS/Location is enabled</p>
+    <div className="flex flex-col items-center gap-3 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-xl">
+      <div className="w-8 h-8 border-4 border-blue-600 dark:border-blue-400 border-t-transparent rounded-full animate-spin" />
+      <p className="text-sm text-blue-700 dark:text-blue-300 font-medium">Detecting your location…</p>
+      <p className="text-xs text-blue-400 dark:text-blue-500">Make sure GPS/Location is enabled</p>
     </div>
   );
 }

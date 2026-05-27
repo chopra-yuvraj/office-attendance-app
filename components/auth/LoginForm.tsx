@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { apiPost } from '@/lib/apiClient';
+import ThemeToggle from '@/components/shared/ThemeToggle';
 
 export default function LoginForm() {
   const [username, setUsername] = useState('');
@@ -36,39 +37,43 @@ export default function LoginForm() {
   }
 
   return (
-    <div className="min-h-screen bg-blue-50 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-blue-50 dark:bg-slate-900 flex items-center justify-center p-4 transition-colors">
       <form
         onSubmit={handleSubmit}
-        className="bg-white w-full max-w-sm rounded-2xl shadow-lg p-8 flex flex-col gap-5"
+        className="bg-white dark:bg-slate-800 w-full max-w-sm rounded-2xl shadow-lg dark:shadow-slate-900/50 p-8 flex flex-col gap-5"
       >
-        <h1 className="text-2xl font-bold text-slate-800 text-center">Chopra Creations Login</h1>
+        <div className="flex items-center justify-between">
+          <h1 className="text-2xl font-bold text-slate-800 dark:text-white">Chopra Creations</h1>
+          <ThemeToggle />
+        </div>
+        <p className="text-sm text-slate-500 dark:text-slate-400 -mt-3">Sign in to your account</p>
 
         {error && (
-          <div className="bg-red-50 border border-red-200 text-red-700 text-sm rounded-lg px-4 py-2">
+          <div className="bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 text-sm rounded-lg px-4 py-2">
             {error}
           </div>
         )}
 
         <div className="flex flex-col gap-1">
-          <label className="text-sm font-medium text-slate-600">Username</label>
+          <label className="text-sm font-medium text-slate-600 dark:text-slate-300">Username</label>
           <input
             type="text"
             value={username}
             onChange={e => setUsername(e.target.value)}
             required
-            className="border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 w-full"
+            className="border border-slate-300 dark:border-slate-600 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 w-full bg-white dark:bg-slate-700 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500"
             placeholder="your.username"
           />
         </div>
 
         <div className="flex flex-col gap-1">
-          <label className="text-sm font-medium text-slate-600">Password</label>
+          <label className="text-sm font-medium text-slate-600 dark:text-slate-300">Password</label>
           <input
             type="password"
             value={password}
             onChange={e => setPassword(e.target.value)}
             required
-            className="border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 w-full"
+            className="border border-slate-300 dark:border-slate-600 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 w-full bg-white dark:bg-slate-700 text-slate-900 dark:text-white"
           />
         </div>
 
@@ -80,7 +85,7 @@ export default function LoginForm() {
           {loading ? 'Signing in…' : 'Sign In'}
         </button>
 
-        <p className="text-xs text-center text-slate-400">
+        <p className="text-xs text-center text-slate-400 dark:text-slate-500">
           Forgot password? Contact your administrator.
         </p>
       </form>

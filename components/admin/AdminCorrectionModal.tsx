@@ -15,16 +15,16 @@ export default function AdminCorrectionModal({ record, onClose, onSubmit }: { re
   const [reason,   setReason]   = useState('');
 
   return (
-    <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 flex flex-col gap-4">
-        <h2 className="text-lg font-bold text-slate-800">Correct Record — {record?.userId?.fullName}</h2>
+    <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+      <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl w-full max-w-md p-6 flex flex-col gap-4">
+        <h2 className="text-lg font-bold text-slate-800 dark:text-white">Correct Record — {record?.userId?.fullName}</h2>
 
         <div className="flex flex-col gap-1">
-          <label className="text-sm font-medium text-slate-600">Field to Correct</label>
+          <label className="text-sm font-medium text-slate-600 dark:text-slate-300">Field to Correct</label>
           <select
             value={field}
             onChange={e => setField(e.target.value)}
-            className="border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-400"
+            className="border border-slate-300 dark:border-slate-600 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-400 bg-white dark:bg-slate-700 text-slate-900 dark:text-white"
           >
             <option value="">— Select field —</option>
             {CORRECTABLE_FIELDS.map(f => (
@@ -34,23 +34,23 @@ export default function AdminCorrectionModal({ record, onClose, onSubmit }: { re
         </div>
 
         <div className="flex flex-col gap-1">
-          <label className="text-sm font-medium text-slate-600">New Value</label>
+          <label className="text-sm font-medium text-slate-600 dark:text-slate-300">New Value</label>
           <input
             type="text"
             value={newValue}
             onChange={e => setNewValue(e.target.value)}
-            className="border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-400"
+            className="border border-slate-300 dark:border-slate-600 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-400 bg-white dark:bg-slate-700 text-slate-900 dark:text-white"
             placeholder="Enter corrected value"
           />
         </div>
 
         <div className="flex flex-col gap-1">
-          <label className="text-sm font-medium text-slate-600">Reason for Correction <span className="text-red-500">*</span></label>
+          <label className="text-sm font-medium text-slate-600 dark:text-slate-300">Reason for Correction <span className="text-red-500">*</span></label>
           <textarea
             value={reason}
             onChange={e => setReason(e.target.value)}
             rows={2}
-            className="border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-400 resize-none"
+            className="border border-slate-300 dark:border-slate-600 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-400 resize-none bg-white dark:bg-slate-700 text-slate-900 dark:text-white"
             placeholder="Explain why this correction is needed…"
           />
         </div>
@@ -58,7 +58,7 @@ export default function AdminCorrectionModal({ record, onClose, onSubmit }: { re
         <div className="flex gap-3 mt-2">
           <button
             onClick={onClose}
-            className="flex-1 border border-slate-300 rounded-lg py-2 text-sm text-slate-600 hover:bg-slate-50"
+            className="flex-1 border border-slate-300 dark:border-slate-600 rounded-lg py-2 text-sm text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700"
           >
             Cancel
           </button>

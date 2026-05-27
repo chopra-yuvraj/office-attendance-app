@@ -1,6 +1,7 @@
 'use client';
 import { useAuth } from '@/context/AuthContext';
 import { usePathname } from 'next/navigation';
+import ThemeToggle from '@/components/shared/ThemeToggle';
 
 const NAV_ITEMS = [
   { href: '/admin/dashboard',  label: '📊 Dashboard' },
@@ -16,11 +17,14 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const pathname = usePathname();
 
   return (
-    <div className="min-h-screen bg-slate-100 lg:flex">
+    <div className="min-h-screen bg-slate-100 dark:bg-slate-900 lg:flex transition-colors">
       {/* Sidebar — hidden on mobile, shown on desktop */}
-      <aside className="hidden lg:flex lg:flex-col w-64 bg-slate-800 text-white min-h-screen px-4 py-6 justify-between">
+      <aside className="hidden lg:flex lg:flex-col w-64 bg-slate-800 dark:bg-slate-950 text-white min-h-screen px-4 py-6 justify-between">
         <div className="flex flex-col gap-2">
-          <p className="text-xl font-bold mb-6">Admin Panel</p>
+          <div className="flex items-center justify-between mb-6">
+            <p className="text-xl font-bold">Admin Panel</p>
+            <ThemeToggle />
+          </div>
           {NAV_ITEMS.map(item => (
             <SidebarLink
               key={item.href}
@@ -48,18 +52,21 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       </aside>
 
       {/* Mobile top bar */}
-      <div className="lg:hidden bg-slate-800 text-white px-4 py-3 flex items-center justify-between">
+      <div className="lg:hidden bg-slate-800 dark:bg-slate-950 text-white px-4 py-3 flex items-center justify-between">
         <span className="text-lg font-bold">Admin Panel</span>
-        <button
-          onClick={logout}
-          className="text-sm font-medium bg-white/15 hover:bg-white/25 px-3 py-1.5 rounded-lg transition"
-        >
-          Logout
-        </button>
+        <div className="flex items-center gap-3">
+          <ThemeToggle />
+          <button
+            onClick={logout}
+            className="text-sm font-medium bg-white/15 hover:bg-white/25 px-3 py-1.5 rounded-lg transition"
+          >
+            Logout
+          </button>
+        </div>
       </div>
 
       {/* Mobile nav bar */}
-      <div className="lg:hidden bg-slate-700 overflow-x-auto">
+      <div className="lg:hidden bg-slate-700 dark:bg-slate-800 overflow-x-auto">
         <div className="flex px-2 py-1.5 gap-1 min-w-max">
           {NAV_ITEMS.map(item => (
             <a

@@ -17,7 +17,7 @@ export default function OfflineBanner() {
   if (isOnline) return null;
 
   return (
-    <div className="bg-amber-400 text-amber-900 text-sm font-semibold px-4 py-2 text-center flex items-center justify-center gap-2">
+    <div className="bg-amber-400 dark:bg-amber-600 text-amber-900 dark:text-amber-100 text-sm font-semibold px-4 py-2 text-center flex items-center justify-center gap-2 rounded-lg">
       <span>📡</span>
       <span>You&apos;re offline. Your punch data will be saved and synced when you reconnect.</span>
     </div>

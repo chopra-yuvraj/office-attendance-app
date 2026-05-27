@@ -13,7 +13,7 @@ export function Toast({ message, type = 'success', onDone }: ToastProps) {
   };
 
   return (
-    <div className={`fixed bottom-20 left-1/2 -translate-x-1/2 px-5 py-3 rounded-xl shadow-lg text-sm font-semibold z-50 ${colors[type]}`}>
+    <div className={`fixed bottom-20 left-1/2 -translate-x-1/2 px-5 py-3 rounded-xl shadow-lg dark:shadow-black/50 text-sm font-semibold z-50 ${colors[type]}`}>
       {message}
     </div>
   );

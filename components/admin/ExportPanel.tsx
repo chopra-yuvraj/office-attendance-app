@@ -33,26 +33,26 @@ export default function ExportPanel() {
   }
 
   return (
-    <div className="bg-white rounded-2xl shadow p-6 flex flex-col gap-4 max-w-lg">
-      <h2 className="text-lg font-bold text-slate-700">Export Attendance Data</h2>
+    <div className="bg-white dark:bg-slate-800 rounded-2xl shadow dark:shadow-slate-900/50 p-6 flex flex-col gap-4 max-w-lg">
+      <h2 className="text-lg font-bold text-slate-700 dark:text-slate-200">Export Attendance Data</h2>
 
       <div className="grid grid-cols-2 gap-3">
         <div className="flex flex-col gap-1">
-          <label className="text-sm font-medium text-slate-600">Start Date</label>
+          <label className="text-sm font-medium text-slate-600 dark:text-slate-300">Start Date</label>
           <input type="date" required value={startDate} onChange={e => setStartDate(e.target.value)}
-            className="border border-slate-300 rounded-lg px-3 py-2 text-sm" />
+            className="border border-slate-300 dark:border-slate-600 rounded-lg px-3 py-2 text-sm bg-white dark:bg-slate-700 text-slate-900 dark:text-white" />
         </div>
         <div className="flex flex-col gap-1">
-          <label className="text-sm font-medium text-slate-600">End Date</label>
+          <label className="text-sm font-medium text-slate-600 dark:text-slate-300">End Date</label>
           <input type="date" required value={endDate} onChange={e => setEndDate(e.target.value)}
-            className="border border-slate-300 rounded-lg px-3 py-2 text-sm" />
+            className="border border-slate-300 dark:border-slate-600 rounded-lg px-3 py-2 text-sm bg-white dark:bg-slate-700 text-slate-900 dark:text-white" />
         </div>
       </div>
 
       <div className="flex flex-col gap-1">
-        <label className="text-sm font-medium text-slate-600">Role Filter</label>
+        <label className="text-sm font-medium text-slate-600 dark:text-slate-300">Role Filter</label>
         <select value={role} onChange={e => setRole(e.target.value)}
-          className="border border-slate-300 rounded-lg px-3 py-2 text-sm bg-white">
+          className="border border-slate-300 dark:border-slate-600 rounded-lg px-3 py-2 text-sm bg-white dark:bg-slate-700 text-slate-900 dark:text-white">
           <option value="all">All Roles</option>
           <option value="office">Office Only</option>
           <option value="factory">Factory Only</option>

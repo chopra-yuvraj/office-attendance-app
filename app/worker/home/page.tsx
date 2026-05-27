@@ -24,7 +24,7 @@ export default function WorkerHomePage() {
   return (
     <div className="flex flex-col gap-6">
       <OfflineBanner />
-      <h1 className="text-2xl font-bold text-slate-800">
+      <h1 className="text-2xl font-bold text-slate-800 dark:text-white">
         Welcome{user ? `, ${user.fullName}` : ''}
       </h1>
       <PunchCard

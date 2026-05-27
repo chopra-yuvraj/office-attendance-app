@@ -27,22 +27,22 @@ export default function LeaveRequestForm() {
 
   return (
     <>
-      <form onSubmit={handleSubmit} className="bg-white rounded-2xl shadow p-6 flex flex-col gap-4">
-        <h2 className="text-lg font-bold text-slate-700">Apply for Leave</h2>
+      <form onSubmit={handleSubmit} className="bg-white dark:bg-slate-800 rounded-2xl shadow dark:shadow-slate-900/50 p-6 flex flex-col gap-4">
+        <h2 className="text-lg font-bold text-slate-700 dark:text-slate-200">Apply for Leave</h2>
 
         <div className="flex flex-col gap-1">
-          <label className="text-sm font-medium text-slate-600">Leave Date</label>
+          <label className="text-sm font-medium text-slate-600 dark:text-slate-300">Leave Date</label>
           <input 
             type="date" 
             value={date}
             onChange={e => setDate(e.target.value)}
-            className="border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 w-full" 
+            className="border border-slate-300 dark:border-slate-600 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 w-full bg-white dark:bg-slate-700 text-slate-900 dark:text-white" 
             required 
           />
         </div>
 
         <div className="flex flex-col gap-1">
-          <label className="text-sm font-medium text-slate-600">Leave Type</label>
+          <label className="text-sm font-medium text-slate-600 dark:text-slate-300">Leave Type</label>
           <div className="flex gap-3">
             {['sick', 'casual'].map(t => (
               <label key={t} className="flex items-center gap-2 cursor-pointer">
@@ -54,20 +54,20 @@ export default function LeaveRequestForm() {
                   onChange={e => setType(e.target.value)}
                   className="accent-blue-600" 
                 />
-                <span className="capitalize text-sm text-slate-700">{t}</span>
+                <span className="capitalize text-sm text-slate-700 dark:text-slate-300">{t}</span>
               </label>
             ))}
           </div>
         </div>
 
         <div className="flex flex-col gap-1">
-          <label className="text-sm font-medium text-slate-600">Reason (optional)</label>
+          <label className="text-sm font-medium text-slate-600 dark:text-slate-300">Reason (optional)</label>
           <textarea 
             rows={3} 
             value={reason}
             onChange={e => setReason(e.target.value)}
             maxLength={500}
-            className="border border-slate-300 rounded-lg px-3 py-2 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 w-full" 
+            className="border border-slate-300 dark:border-slate-600 rounded-lg px-3 py-2 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 w-full bg-white dark:bg-slate-700 text-slate-900 dark:text-white" 
           />
         </div>
 

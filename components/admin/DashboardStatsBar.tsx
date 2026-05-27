@@ -22,7 +22,7 @@ export default function DashboardStatsBar({
       <StatCard
         label="Present Today"
         value={present}
-        color="bg-green-500"
+        color="bg-green-500 dark:bg-green-600"
         icon="✅"
         onClick={onPresentClick}
         clickable={!!onPresentClick}
@@ -30,13 +30,13 @@ export default function DashboardStatsBar({
       <StatCard
         label="Absent Today"
         value={absent}
-        color="bg-red-500"
+        color="bg-red-500 dark:bg-red-600"
         icon="❌"
         onClick={onAbsentClick}
         clickable={!!onAbsentClick}
       />
-      <StatCard label="Pending Review"   value={pending}         color="bg-yellow-500" icon="⏳" />
-      <StatCard label="Total Production" value={totalProduction} color="bg-blue-600"   icon="🏭" />
+      <StatCard label="Pending Review"   value={pending}         color="bg-yellow-500 dark:bg-yellow-600" icon="⏳" />
+      <StatCard label="Total Production" value={totalProduction} color="bg-blue-600 dark:bg-blue-700"     icon="🏭" />
     </div>
   );
 }
@@ -50,7 +50,7 @@ function StatCard({
   return (
     <div
       onClick={onClick}
-      className={`${color} text-white rounded-xl p-4 flex flex-col gap-1 shadow transition
+      className={`${color} text-white rounded-xl p-4 flex flex-col gap-1 shadow dark:shadow-slate-900/50 transition
         ${clickable ? 'cursor-pointer hover:scale-[1.03] hover:shadow-lg active:scale-[0.98] ring-0 hover:ring-2 hover:ring-white/30' : ''}
       `}
       role={clickable ? 'button' : undefined}

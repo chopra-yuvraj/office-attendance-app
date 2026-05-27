@@ -90,17 +90,16 @@ export default function CameraCapture({ mode, label, onCapture }: Props) {
     window.location.reload();
   }
 
-  // Error state — NO file picker fallback, only camera retry
   if (error) {
     return (
-      <div className="flex flex-col items-center gap-4 p-6 bg-red-50 rounded-xl border border-red-200">
-        <div className="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center">
+      <div className="flex flex-col items-center gap-4 p-6 bg-red-50 dark:bg-red-900/20 rounded-xl border border-red-200 dark:border-red-800">
+        <div className="w-12 h-12 rounded-full bg-red-100 dark:bg-red-900/50 flex items-center justify-center">
           <span className="text-2xl">🚫</span>
         </div>
-        <p className="text-sm text-red-700 font-semibold text-center">Camera Required</p>
-        <p className="text-xs text-red-500 text-center leading-relaxed max-w-xs">{error}</p>
-        <div className="bg-white border border-red-100 rounded-lg p-3 mt-1 w-full max-w-xs">
-          <p className="text-[11px] text-slate-600 leading-relaxed">
+        <p className="text-sm text-red-700 dark:text-red-400 font-semibold text-center">Camera Required</p>
+        <p className="text-xs text-red-500 dark:text-red-300 text-center leading-relaxed max-w-xs">{error}</p>
+        <div className="bg-white dark:bg-slate-800 border border-red-100 dark:border-red-900/50 rounded-lg p-3 mt-1 w-full max-w-xs">
+          <p className="text-[11px] text-slate-600 dark:text-slate-300 leading-relaxed">
             <strong>How to enable:</strong><br/>
             • <strong>Android Chrome:</strong> Tap the 🔒 icon in the address bar → Site Settings → Camera → Allow<br/>
             • <strong>iPhone Safari:</strong> Settings → Safari → Camera → Allow<br/>

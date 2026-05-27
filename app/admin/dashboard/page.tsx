@@ -12,7 +12,7 @@ export default function AdminDashboardPage() {
 
   return (
     <div className="flex flex-col gap-6">
-      <h1 className="text-2xl font-bold text-slate-800">Admin Dashboard</h1>
+      <h1 className="text-2xl font-bold text-slate-800 dark:text-white">Admin Dashboard</h1>
       {isLoading
         ? <CardSkeleton />
         : <DashboardStatsBar

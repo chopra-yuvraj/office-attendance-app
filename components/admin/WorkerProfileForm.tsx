@@ -91,16 +91,16 @@ export default function WorkerProfileForm({ workerId, initialData, onSaved, onCa
 
   return (
     <>
-      <form onSubmit={handleSubmit} className="bg-white rounded-2xl shadow p-6 flex flex-col gap-4 max-w-2xl">
+      <form onSubmit={handleSubmit} className="bg-white dark:bg-slate-800 rounded-2xl shadow dark:shadow-slate-900/50 p-6 flex flex-col gap-4 max-w-2xl">
         <div className="flex items-center justify-between">
-          <h2 className="text-lg font-bold text-slate-700">
+          <h2 className="text-lg font-bold text-slate-700 dark:text-slate-200">
             {workerId ? 'Edit Worker Profile' : 'Create Worker Profile'}
           </h2>
           {workerId && onCancel && (
             <button
               type="button"
               onClick={onCancel}
-              className="text-sm font-medium text-slate-500 hover:text-slate-700 border border-slate-300 rounded-lg px-3 py-1.5 hover:bg-slate-50 transition"
+              className="text-sm font-medium text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-white border border-slate-300 dark:border-slate-600 rounded-lg px-3 py-1.5 hover:bg-slate-50 dark:hover:bg-slate-700 transition"
             >
               ✕ Cancel Edit
             </button>
@@ -108,34 +108,34 @@ export default function WorkerProfileForm({ workerId, initialData, onSaved, onCa
         </div>
 
         {workerId && (
-          <p className="text-xs text-blue-600 bg-blue-50 border border-blue-200 rounded-lg px-3 py-2">
+          <p className="text-xs text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg px-3 py-2">
             ✏️ Editing worker. Change any field and click Save Profile. Leave Password blank to keep current.
           </p>
         )}
 
-        {error && <div className="bg-red-50 border border-red-200 text-red-700 text-sm rounded-lg px-4 py-2">{error}</div>}
+        {error && <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 text-sm rounded-lg px-4 py-2">{error}</div>}
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {PROFILE_FIELDS.filter(f => workerId ? f.name !== 'password' : true).map(field => (
             <div key={field.name} className="flex flex-col gap-1">
-              <label className="text-sm font-medium text-slate-600">{field.label}</label>
+              <label className="text-sm font-medium text-slate-600 dark:text-slate-300">{field.label}</label>
               <input
                 type={field.type}
                 required={field.required && !workerId}
                 value={formData[field.name] || ''}
                 onChange={updateField(field.name)}
-                className="border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none w-full"
+                className="border border-slate-300 dark:border-slate-600 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none w-full bg-white dark:bg-slate-700 text-slate-900 dark:text-white"
               />
             </div>
           ))}
 
           <div className="flex flex-col gap-1">
-            <label className="text-sm font-medium text-slate-600">Role</label>
+            <label className="text-sm font-medium text-slate-600 dark:text-slate-300">Role</label>
             <select
               required
               value={formData.role || ''}
               onChange={updateField('role')}
-              className="border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none w-full bg-white"
+              className="border border-slate-300 dark:border-slate-600 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none w-full bg-white dark:bg-slate-700 text-slate-900 dark:text-white"
             >
               <option value="">— Select role —</option>
               <option value="office">Office</option>
@@ -144,27 +144,27 @@ export default function WorkerProfileForm({ workerId, initialData, onSaved, onCa
           </div>
         </div>
 
-        <h3 className="text-md font-bold text-slate-700 mt-4 border-b pb-2">Emergency Contacts</h3>
+        <h3 className="text-md font-bold text-slate-700 dark:text-slate-200 mt-4 border-b dark:border-slate-700 pb-2">Emergency Contacts</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="flex flex-col gap-1">
-            <label className="text-sm font-medium text-slate-600">Contact 1 Name</label>
+            <label className="text-sm font-medium text-slate-600 dark:text-slate-300">Contact 1 Name</label>
             <input type="text" required={!workerId} value={formData.contact1Name || ''} onChange={updateField('contact1Name')}
-              className="border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none w-full" />
+              className="border border-slate-300 dark:border-slate-600 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none w-full bg-white dark:bg-slate-700 text-slate-900 dark:text-white" />
           </div>
           <div className="flex flex-col gap-1">
-            <label className="text-sm font-medium text-slate-600">Contact 1 Mobile</label>
+            <label className="text-sm font-medium text-slate-600 dark:text-slate-300">Contact 1 Mobile</label>
             <input type="tel" required={!workerId} value={formData.contact1Mobile || ''} onChange={updateField('contact1Mobile')}
-              className="border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none w-full" />
+              className="border border-slate-300 dark:border-slate-600 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none w-full bg-white dark:bg-slate-700 text-slate-900 dark:text-white" />
           </div>
           <div className="flex flex-col gap-1">
-            <label className="text-sm font-medium text-slate-600">Contact 2 Name</label>
+            <label className="text-sm font-medium text-slate-600 dark:text-slate-300">Contact 2 Name</label>
             <input type="text" value={formData.contact2Name || ''} onChange={updateField('contact2Name')}
-              className="border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none w-full" />
+              className="border border-slate-300 dark:border-slate-600 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none w-full bg-white dark:bg-slate-700 text-slate-900 dark:text-white" />
           </div>
           <div className="flex flex-col gap-1">
-            <label className="text-sm font-medium text-slate-600">Contact 2 Mobile</label>
+            <label className="text-sm font-medium text-slate-600 dark:text-slate-300">Contact 2 Mobile</label>
             <input type="tel" value={formData.contact2Mobile || ''} onChange={updateField('contact2Mobile')}
-              className="border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none w-full" />
+              className="border border-slate-300 dark:border-slate-600 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none w-full bg-white dark:bg-slate-700 text-slate-900 dark:text-white" />
           </div>
         </div>
 
@@ -178,11 +178,11 @@ export default function WorkerProfileForm({ workerId, initialData, onSaved, onCa
 
         {/* J18: Password Reset Section */}
         {workerId && (
-          <div className="mt-4 border-t border-slate-200 pt-4">
+          <div className="mt-4 border-t border-slate-200 dark:border-slate-700 pt-4">
             <button
               type="button"
               onClick={() => setShowReset(!showReset)}
-              className="text-sm text-amber-600 hover:underline font-medium"
+              className="text-sm text-amber-600 dark:text-amber-400 hover:underline font-medium"
             >
               🔑 {showReset ? 'Cancel' : 'Reset Password'}
             </button>
@@ -195,7 +195,7 @@ export default function WorkerProfileForm({ workerId, initialData, onSaved, onCa
                   placeholder="New password"
                   required
                   minLength={6}
-                  className="border border-slate-300 rounded-lg px-3 py-2 text-sm flex-1"
+                  className="border border-slate-300 dark:border-slate-600 rounded-lg px-3 py-2 text-sm flex-1 bg-white dark:bg-slate-700 text-slate-900 dark:text-white"
                 />
                 <button type="submit"
                   className="bg-amber-500 hover:bg-amber-600 text-white rounded-lg px-4 py-2 text-sm font-semibold">

@@ -114,13 +114,13 @@ export default function AttendancePage() {
   return (
     <div className="flex flex-col gap-6">
       <div className="flex items-center justify-between flex-wrap gap-3">
-        <h1 className="text-2xl font-bold text-slate-800">Attendance Review</h1>
+        <h1 className="text-2xl font-bold text-slate-800 dark:text-white">Attendance Review</h1>
         <div className="flex gap-2">
           {/* Export CSV button */}
           <button
             onClick={handleExportCsv}
             disabled={csvLoading || !date}
-            className="inline-flex items-center gap-1.5 px-3 py-2 text-sm font-medium bg-white border border-slate-300 rounded-lg text-slate-700 hover:bg-slate-50 transition disabled:opacity-50"
+            className="inline-flex items-center gap-1.5 px-3 py-2 text-sm font-medium bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition disabled:opacity-50"
           >
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -143,9 +143,9 @@ export default function AttendancePage() {
       {/* Filters: Date + Status + Worker Name */}
       <div className="flex gap-3 flex-wrap">
         <input type="date" value={date} onChange={e => setDate(e.target.value)}
-          className="border border-slate-300 rounded-lg px-3 py-2 text-sm" />
+          className="border border-slate-300 dark:border-slate-600 rounded-lg px-3 py-2 text-sm bg-white dark:bg-slate-800 text-slate-900 dark:text-white" />
         <select value={status} onChange={e => setStatus(e.target.value)}
-          className="border border-slate-300 rounded-lg px-3 py-2 text-sm bg-white">
+          className="border border-slate-300 dark:border-slate-600 rounded-lg px-3 py-2 text-sm bg-white dark:bg-slate-800 text-slate-900 dark:text-white">
           <option value="">All Statuses</option>
           <option value="pending">Pending</option>
           <option value="approved">Approved</option>
@@ -158,7 +158,7 @@ export default function AttendancePage() {
             value={workerFilter}
             onChange={e => setWorkerFilter(e.target.value)}
             placeholder="Filter by worker name…"
-            className="border border-slate-300 rounded-lg pl-9 pr-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none w-56"
+            className="border border-slate-300 dark:border-slate-600 rounded-lg pl-9 pr-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none w-56 bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500"
           />
           <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />

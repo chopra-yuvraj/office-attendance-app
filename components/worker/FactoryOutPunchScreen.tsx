@@ -50,14 +50,14 @@ export default function FactoryOutPunchScreen({ onSuccess }: Props) {
 
   // Step 3: Enter machine count
   if (step === 'machine_count') return (
-    <div className="bg-white rounded-2xl shadow p-6 flex flex-col gap-4">
-      <h2 className="text-lg font-bold text-slate-700">How many machines did you operate today?</h2>
+    <div className="bg-white dark:bg-slate-800 rounded-2xl shadow dark:shadow-slate-900/50 p-6 flex flex-col gap-4">
+      <h2 className="text-lg font-bold text-slate-700 dark:text-slate-200">How many machines did you operate today?</h2>
       <input
         type="number"
         min={1}
         value={machineCount}
         onChange={e => setMachineCount(Math.max(1, parseInt(e.target.value) || 1))}
-        className="border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 w-full"
+        className="border border-slate-300 dark:border-slate-600 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 w-full bg-white dark:bg-slate-700 text-slate-900 dark:text-white"
       />
       <button
         onClick={() => setStep('machine_forms')}
@@ -129,29 +129,29 @@ export default function FactoryOutPunchScreen({ onSuccess }: Props) {
   }
 
   if (step === 'submitting') return (
-    <div className="flex flex-col items-center gap-3 p-4 bg-blue-50 rounded-xl">
-      <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin" />
-      <p className="text-sm text-blue-700 font-medium">Submitting factory OUT punch…</p>
+    <div className="flex flex-col items-center gap-3 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-xl">
+      <div className="w-8 h-8 border-4 border-blue-600 dark:border-blue-400 border-t-transparent rounded-full animate-spin" />
+      <p className="text-sm text-blue-700 dark:text-blue-300 font-medium">Submitting factory OUT punch…</p>
     </div>
   );
 
   if (step === 'done') return (
-    <div className="bg-green-50 border border-green-200 rounded-xl p-4 text-center">
-      <p className="text-green-700 font-semibold">✅ Factory OUT punch recorded!</p>
+    <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-xl p-4 text-center">
+      <p className="text-green-700 dark:text-green-400 font-semibold">✅ Factory OUT punch recorded!</p>
     </div>
   );
 
   if (step === 'offline_cached') return (
-    <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 text-center">
-      <p className="text-blue-700 font-semibold">📡 Saved Offline</p>
-      <p className="text-xs text-blue-500 mt-1">Your punch will sync when you reconnect.</p>
+    <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-xl p-4 text-center">
+      <p className="text-blue-700 dark:text-blue-300 font-semibold">📡 Saved Offline</p>
+      <p className="text-xs text-blue-500 dark:text-blue-400 mt-1">Your punch will sync when you reconnect.</p>
     </div>
   );
 
   if (step === 'error') return (
-    <div className="bg-red-50 border border-red-200 rounded-xl p-4 text-center">
-      <p className="text-red-600 text-sm font-medium">❌ {error}</p>
-      <button onClick={() => setStep('idle')} className="mt-3 text-xs text-blue-600 underline">Try Again</button>
+    <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-4 text-center">
+      <p className="text-red-600 dark:text-red-400 text-sm font-medium">❌ {error}</p>
+      <button onClick={() => setStep('idle')} className="mt-3 text-xs text-blue-600 dark:text-blue-400 underline">Try Again</button>
     </div>
   );
 

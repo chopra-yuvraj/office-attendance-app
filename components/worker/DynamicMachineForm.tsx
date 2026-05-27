@@ -87,14 +87,16 @@ export default function DynamicMachineForm({ totalMachines, onAllComplete }: Pro
         <div
           key={i}
           className={`rounded-xl border-2 p-4 flex flex-col gap-3 transition
-            ${log.isComplete ? 'border-green-400 bg-green-50' : 'border-slate-200 bg-white'}`}
+            ${log.isComplete
+              ? 'border-green-400 dark:border-green-600 bg-green-50 dark:bg-green-900/20'
+              : 'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800'}`}
         >
           {/* Header */}
           <div className="flex items-center justify-between">
-            <h3 className="font-bold text-slate-800">Machine {i + 1}</h3>
+            <h3 className="font-bold text-slate-800 dark:text-white">Machine {i + 1}</h3>
             {log.isComplete
               ? <span className="text-xs bg-green-500 text-white px-2 py-0.5 rounded-full">✅ Complete</span>
-              : <span className="text-xs bg-yellow-100 text-yellow-700 px-2 py-0.5 rounded-full">⏳ Incomplete</span>
+              : <span className="text-xs bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400 px-2 py-0.5 rounded-full">⏳ Incomplete</span>
             }
           </div>
 
@@ -118,39 +120,39 @@ export default function DynamicMachineForm({ totalMachines, onAllComplete }: Pro
             <GeolocationCapture onCapture={(c) => handleGeoCapture(i, c)} />
           )}
           {log.driveFileId && (
-            <p className="text-xs text-green-600">✅ Photo uploaded & GPS captured</p>
+            <p className="text-xs text-green-600 dark:text-green-400">✅ Photo uploaded & GPS captured</p>
           )}
 
           {/* Metrics */}
           <div className="flex flex-col gap-1">
-            <label className="text-xs font-medium text-slate-500">Production Count</label>
+            <label className="text-xs font-medium text-slate-500 dark:text-slate-400">Production Count</label>
             <input
               type="number"
               min={0}
               value={log.productionCount}
               onChange={e => updateLog(i, { productionCount: Number(e.target.value) })}
-              className="border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 w-full"
+              className="border border-slate-300 dark:border-slate-600 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 w-full bg-white dark:bg-slate-700 text-slate-900 dark:text-white"
               placeholder="e.g. 120"
             />
           </div>
 
           <div className="flex flex-col gap-1">
-            <label className="text-xs font-medium text-slate-500">Design No.</label>
+            <label className="text-xs font-medium text-slate-500 dark:text-slate-400">Design No.</label>
             <input
               type="text"
               value={log.designNo}
               onChange={e => updateLog(i, { designNo: e.target.value })}
-              className="border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 w-full"
+              className="border border-slate-300 dark:border-slate-600 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 w-full bg-white dark:bg-slate-700 text-slate-900 dark:text-white"
               placeholder="e.g. D-402"
             />
           </div>
 
           <div className="flex flex-col gap-1">
-            <label className="text-xs font-medium text-slate-500">Category</label>
+            <label className="text-xs font-medium text-slate-500 dark:text-slate-400">Category</label>
             <select
               value={log.category}
               onChange={e => updateLog(i, { category: e.target.value })}
-              className="border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 w-full bg-white"
+              className="border border-slate-300 dark:border-slate-600 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 w-full bg-white dark:bg-slate-700 text-slate-900 dark:text-white"
             >
               <option value="">— Select category —</option>
               {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}

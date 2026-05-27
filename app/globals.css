@@ -7,14 +7,32 @@
   --foreground: #171717;
 }
 
+.dark {
+  --background: #0f172a;
+  --foreground: #e2e8f0;
+}
+
 body {
   color: var(--foreground);
   background: var(--background);
   font-family: Arial, Helvetica, sans-serif;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 input, textarea, select {
-  color: #0f172a; /* text-slate-900 */
+  color: #0f172a;
+}
+
+.dark input, .dark textarea, .dark select {
+  color: #e2e8f0;
+  background-color: #1e293b;
+  border-color: #334155;
+}
+
+/* Date/time picker icon colors for dark mode */
+.dark input[type="date"]::-webkit-calendar-picker-indicator,
+.dark input[type="time"]::-webkit-calendar-picker-indicator {
+  filter: invert(1);
 }
 
 @layer utilities {

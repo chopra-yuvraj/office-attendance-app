@@ -43,9 +43,9 @@ export default function AdminDashboardTable({ records, onApprove, onCorrect, onV
 
   return (
     <>
-      <div className="overflow-x-auto rounded-xl shadow bg-white">
+      <div className="overflow-x-auto rounded-xl shadow dark:shadow-slate-900/50 bg-white dark:bg-slate-800">
         <table className="w-full text-sm text-left">
-          <thead className="bg-slate-800 text-white">
+          <thead className="bg-slate-800 dark:bg-slate-950 text-white">
             <tr>
               {COLUMNS.map(col => (
                 <th key={col.key} className={`px-4 py-3 font-medium whitespace-nowrap ${col.width}`}>
@@ -57,7 +57,7 @@ export default function AdminDashboardTable({ records, onApprove, onCorrect, onV
           <tbody>
             {records.length === 0 && (
               <tr>
-                <td colSpan={COLUMNS.length} className="px-4 py-8 text-center text-slate-400">
+                <td colSpan={COLUMNS.length} className="px-4 py-8 text-center text-slate-400 dark:text-slate-500">
                   No records found for the selected filters.
                 </td>
               </tr>
@@ -69,9 +69,9 @@ export default function AdminDashboardTable({ records, onApprove, onCorrect, onV
               const outMapsUrl = getGoogleMapsUrl(rec.outPunch);
 
               return (
-                <tr key={rec._id} className={i % 2 === 0 ? 'bg-white' : 'bg-slate-50'}>
-                  <td className="px-4 py-3 font-medium text-slate-800">{rec.userId?.fullName ?? '—'}</td>
-                  <td className="px-4 py-3 text-slate-600">{new Date(rec.date).toLocaleDateString()}</td>
+                <tr key={rec._id} className={i % 2 === 0 ? 'bg-white dark:bg-slate-800' : 'bg-slate-50 dark:bg-slate-800/50'}>
+                  <td className="px-4 py-3 font-medium text-slate-800 dark:text-white">{rec.userId?.fullName ?? '—'}</td>
+                  <td className="px-4 py-3 text-slate-600 dark:text-slate-300">{new Date(rec.date).toLocaleDateString()}</td>
 
                   {/* IN Time with photo + location icons */}
                   <td className="px-4 py-3">
@@ -153,7 +153,7 @@ export default function AdminDashboardTable({ records, onApprove, onCorrect, onV
                     </div>
                   </td>
 
-                  <td className="px-4 py-3">
+                  <td className="px-4 py-3 text-slate-600 dark:text-slate-300">
                     {rec.totalWorkedMinutes != null
                       ? `${Math.floor(rec.totalWorkedMinutes/60)}h ${rec.totalWorkedMinutes%60}m`
                       : '—'}
@@ -198,21 +198,21 @@ export default function AdminDashboardTable({ records, onApprove, onCorrect, onV
           onClick={() => setViewingPhoto(null)}
         >
           <div
-            className="bg-white rounded-2xl shadow-2xl max-w-lg w-full flex flex-col overflow-hidden"
+            className="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl max-w-lg w-full flex flex-col overflow-hidden"
             onClick={e => e.stopPropagation()}
           >
             {/* Header */}
-            <div className="flex items-center justify-between px-5 py-3 border-b border-slate-200">
-              <h3 className="text-sm font-bold text-slate-700">{viewingPhoto.label}</h3>
+            <div className="flex items-center justify-between px-5 py-3 border-b border-slate-200 dark:border-slate-700">
+              <h3 className="text-sm font-bold text-slate-700 dark:text-white">{viewingPhoto.label}</h3>
               <button
                 onClick={() => setViewingPhoto(null)}
-                className="w-8 h-8 rounded-full hover:bg-slate-100 flex items-center justify-center transition text-slate-500"
+                className="w-8 h-8 rounded-full hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center justify-center transition text-slate-500 dark:text-slate-400"
               >
                 ✕
               </button>
             </div>
             {/* Image */}
-            <div className="p-4 flex items-center justify-center bg-slate-50 min-h-[300px]">
+            <div className="p-4 flex items-center justify-center bg-slate-50 dark:bg-slate-900 min-h-[300px]">
               <img
                 src={viewingPhoto.url}
                 alt={viewingPhoto.label}
@@ -239,7 +239,7 @@ export default function AdminDashboardTable({ records, onApprove, onCorrect, onV
               />
             </div>
             {/* Footer */}
-            <div className="px-5 py-3 border-t border-slate-200 flex justify-end">
+            <div className="px-5 py-3 border-t border-slate-200 dark:border-slate-700 flex justify-end">
               <a
                 href={viewingPhoto.url.replace('/thumbnail?id=', '/file/d/').replace(/&sz=.*/, '/view')}
                 target="_blank"

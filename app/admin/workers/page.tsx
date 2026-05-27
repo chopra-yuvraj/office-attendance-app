@@ -113,7 +113,7 @@ export default function AdminWorkersPage() {
 
   return (
     <div className="flex flex-col gap-6">
-      <h1 className="text-2xl font-bold text-slate-800">Manage Workers</h1>
+      <h1 className="text-2xl font-bold text-slate-800 dark:text-white">Manage Workers</h1>
 
       {/* Form Section */}
       <WorkerProfileForm
@@ -125,20 +125,20 @@ export default function AdminWorkersPage() {
       />
 
       {/* Worker List Section */}
-      <section className="bg-white rounded-2xl shadow overflow-hidden">
-        <div className="p-5 border-b border-slate-200 flex flex-col sm:flex-row sm:items-center gap-3">
-          <h2 className="text-lg font-bold text-slate-700 flex-1">
+      <section className="bg-white dark:bg-slate-800 rounded-2xl shadow dark:shadow-slate-900/50 overflow-hidden">
+        <div className="p-5 border-b border-slate-200 dark:border-slate-700 flex flex-col sm:flex-row sm:items-center gap-3">
+          <h2 className="text-lg font-bold text-slate-700 dark:text-slate-200 flex-1">
             Workers
-            {data && <span className="ml-2 text-sm font-normal text-slate-400">({filtered.length})</span>}
+            {data && <span className="ml-2 text-sm font-normal text-slate-400 dark:text-slate-500">({filtered.length})</span>}
           </h2>
           <div className="flex items-center gap-3">
             {/* Show inactive toggle */}
-            <label className="flex items-center gap-2 text-sm text-slate-500 cursor-pointer select-none">
+            <label className="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400 cursor-pointer select-none">
               <input
                 type="checkbox"
                 checked={showInactive}
                 onChange={e => setShowInactive(e.target.checked)}
-                className="rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+                className="rounded border-slate-300 dark:border-slate-600 text-blue-600 focus:ring-blue-500 bg-white dark:bg-slate-700"
               />
               Show Inactive
             </label>
@@ -148,7 +148,7 @@ export default function AdminWorkersPage() {
                 value={searchTerm}
                 onChange={e => setSearchTerm(e.target.value)}
                 placeholder="Search by name, username, or mobile…"
-                className="border border-slate-300 rounded-lg pl-9 pr-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none w-full sm:w-72"
+                className="border border-slate-300 dark:border-slate-600 rounded-lg pl-9 pr-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none w-full sm:w-72 bg-white dark:bg-slate-700 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500"
               />
               <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -158,29 +158,29 @@ export default function AdminWorkersPage() {
         </div>
 
         {isLoading && (
-          <div className="p-8 text-center text-slate-400">
-            <div className="inline-block w-6 h-6 border-2 border-slate-300 border-t-blue-600 rounded-full animate-spin mb-2" />
+          <div className="p-8 text-center text-slate-400 dark:text-slate-500">
+            <div className="inline-block w-6 h-6 border-2 border-slate-300 dark:border-slate-600 border-t-blue-600 dark:border-t-blue-400 rounded-full animate-spin mb-2" />
             <p className="text-sm">Loading workers…</p>
           </div>
         )}
 
         {error && (
-          <div className="p-6 text-center text-red-600 text-sm">
-            Failed to load workers. <button onClick={() => mutate()} className="underline text-blue-600">Retry</button>
+          <div className="p-6 text-center text-red-600 dark:text-red-400 text-sm">
+            Failed to load workers. <button onClick={() => mutate()} className="underline text-blue-600 dark:text-blue-400">Retry</button>
           </div>
         )}
 
         {loadingDetail && (
-          <div className="fixed inset-0 bg-black/20 z-40 flex items-center justify-center">
-            <div className="bg-white rounded-xl shadow-lg px-6 py-4 flex items-center gap-3">
-              <div className="w-5 h-5 border-2 border-slate-300 border-t-blue-600 rounded-full animate-spin" />
-              <span className="text-sm text-slate-600">Loading worker details…</span>
+          <div className="fixed inset-0 bg-black/40 dark:bg-black/60 z-40 flex items-center justify-center">
+            <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg px-6 py-4 flex items-center gap-3">
+              <div className="w-5 h-5 border-2 border-slate-300 dark:border-slate-600 border-t-blue-600 dark:border-t-blue-400 rounded-full animate-spin" />
+              <span className="text-sm text-slate-600 dark:text-slate-300">Loading worker details…</span>
             </div>
           </div>
         )}
 
         {!isLoading && !error && filtered.length === 0 && (
-          <div className="p-8 text-center text-slate-400 text-sm">
+          <div className="p-8 text-center text-slate-400 dark:text-slate-500 text-sm">
             {searchTerm ? 'No workers match your search.' : 'No workers found. Create one above.'}
           </div>
         )}
@@ -189,7 +189,7 @@ export default function AdminWorkersPage() {
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="bg-slate-50 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                <tr className="bg-slate-50 dark:bg-slate-900 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
                   <th className="px-5 py-3">Full Name</th>
                   <th className="px-5 py-3">Username</th>
                   <th className="px-5 py-3">Role</th>
@@ -199,37 +199,37 @@ export default function AdminWorkersPage() {
                   <th className="px-5 py-3 text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100">
+              <tbody className="divide-y divide-slate-100 dark:divide-slate-700/50">
                 {filtered.map(w => (
                   <tr
                     key={w._id}
-                    className={`transition hover:bg-blue-50/50 ${
-                      selectedWorker?._id === w._id ? 'bg-blue-50 ring-1 ring-inset ring-blue-200' : ''
+                    className={`transition hover:bg-blue-50/50 dark:hover:bg-slate-700/50 ${
+                      selectedWorker?._id === w._id ? 'bg-blue-50 dark:bg-slate-700 ring-1 ring-inset ring-blue-200 dark:ring-slate-600' : ''
                     } ${!w.isActive ? 'opacity-60' : ''}`}
                   >
-                    <td className="px-5 py-3 font-medium text-slate-800 whitespace-nowrap">{w.fullName}</td>
-                    <td className="px-5 py-3 text-slate-600 whitespace-nowrap">{w.username}</td>
+                    <td className="px-5 py-3 font-medium text-slate-800 dark:text-white whitespace-nowrap">{w.fullName}</td>
+                    <td className="px-5 py-3 text-slate-600 dark:text-slate-300 whitespace-nowrap">{w.username}</td>
                     <td className="px-5 py-3 whitespace-nowrap">
                       <span className={`inline-block px-2 py-0.5 rounded-full text-xs font-semibold ${
                         w.role === 'office'
-                          ? 'bg-purple-100 text-purple-700'
-                          : 'bg-teal-100 text-teal-700'
+                          ? 'bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400'
+                          : 'bg-teal-100 dark:bg-teal-900/30 text-teal-700 dark:text-teal-400'
                       }`}>
                         {w.role.charAt(0).toUpperCase() + w.role.slice(1)}
                       </span>
                     </td>
-                    <td className="px-5 py-3 text-slate-600 whitespace-nowrap">{w.mobile}</td>
-                    <td className="px-5 py-3 text-slate-600 whitespace-nowrap">₹{w.salaryPerDay}</td>
+                    <td className="px-5 py-3 text-slate-600 dark:text-slate-300 whitespace-nowrap">{w.mobile}</td>
+                    <td className="px-5 py-3 text-slate-600 dark:text-slate-300 whitespace-nowrap">₹{w.salaryPerDay}</td>
                     <td className="px-5 py-3 whitespace-nowrap">
                       <span className={`inline-block w-2 h-2 rounded-full mr-1.5 ${w.isActive ? 'bg-green-500' : 'bg-red-400'}`} />
-                      <span className="text-xs text-slate-500">{w.isActive ? 'Active' : 'Inactive'}</span>
+                      <span className="text-xs text-slate-500 dark:text-slate-400">{w.isActive ? 'Active' : 'Inactive'}</span>
                     </td>
                     <td className="px-5 py-3 text-right whitespace-nowrap">
                       <div className="flex items-center justify-end gap-1">
                         <button
                           onClick={() => handleEdit(w)}
                           disabled={loadingDetail}
-                          className="inline-flex items-center gap-1 text-sm font-medium text-blue-600 hover:text-blue-800 hover:bg-blue-100 px-3 py-1.5 rounded-lg transition disabled:opacity-50"
+                          className="inline-flex items-center gap-1 text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 hover:bg-blue-100 dark:hover:bg-blue-900/30 px-3 py-1.5 rounded-lg transition disabled:opacity-50"
                         >
                           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
@@ -238,7 +238,7 @@ export default function AdminWorkersPage() {
                         </button>
                         <button
                           onClick={() => setHistoryWorker({ _id: w._id, fullName: w.fullName })}
-                          className="inline-flex items-center gap-1 text-sm font-medium text-slate-500 hover:text-slate-700 hover:bg-slate-100 px-3 py-1.5 rounded-lg transition"
+                          className="inline-flex items-center gap-1 text-sm font-medium text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 px-3 py-1.5 rounded-lg transition"
                         >
                           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -250,8 +250,8 @@ export default function AdminWorkersPage() {
                           onClick={() => setDeactivating({ _id: w._id, fullName: w.fullName, isActive: w.isActive })}
                           className={`inline-flex items-center gap-1 text-sm font-medium px-3 py-1.5 rounded-lg transition ${
                             w.isActive
-                              ? 'text-red-500 hover:text-red-700 hover:bg-red-50'
-                              : 'text-green-600 hover:text-green-700 hover:bg-green-50'
+                              ? 'text-red-500 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 hover:bg-red-50 dark:hover:bg-red-900/30'
+                              : 'text-green-600 dark:text-green-400 hover:text-green-700 dark:hover:text-green-300 hover:bg-green-50 dark:hover:bg-green-900/30'
                           }`}
                         >
                           {w.isActive ? (
@@ -292,24 +292,24 @@ export default function AdminWorkersPage() {
       {/* Feature 3: Deactivate Confirmation Modal */}
       {deactivating && (
         <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl shadow-2xl max-w-sm w-full p-6 flex flex-col gap-4">
+          <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl max-w-sm w-full p-6 flex flex-col gap-4">
             <div className="flex items-center gap-3">
               <span className="text-3xl">{deactivating.isActive ? '⚠️' : '✅'}</span>
-              <h2 className="text-lg font-bold text-slate-800">
+              <h2 className="text-lg font-bold text-slate-800 dark:text-white">
                 {deactivating.isActive ? 'Deactivate Worker' : 'Reactivate Worker'}
               </h2>
             </div>
-            <p className="text-sm text-slate-600">
+            <p className="text-sm text-slate-600 dark:text-slate-300">
               {deactivating.isActive
-                ? <>Are you sure you want to deactivate <strong>{deactivating.fullName}</strong>? They will no longer be able to log in or punch attendance. Historical records will be preserved.</>
-                : <>Are you sure you want to reactivate <strong>{deactivating.fullName}</strong>? They will be able to log in and punch attendance again.</>
+                ? <>Are you sure you want to deactivate <strong className="dark:text-white">{deactivating.fullName}</strong>? They will no longer be able to log in or punch attendance. Historical records will be preserved.</>
+                : <>Are you sure you want to reactivate <strong className="dark:text-white">{deactivating.fullName}</strong>? They will be able to log in and punch attendance again.</>
               }
             </p>
             <div className="flex gap-3">
               <button
                 onClick={() => setDeactivating(null)}
                 disabled={actionLoading}
-                className="flex-1 border border-slate-300 rounded-lg py-2 text-sm text-slate-600 hover:bg-slate-50 disabled:opacity-50"
+                className="flex-1 border border-slate-300 dark:border-slate-600 rounded-lg py-2 text-sm text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 disabled:opacity-50"
               >
                 Cancel
               </button>
