@@ -4,6 +4,7 @@ import AttendanceRecord from '@/models/AttendanceRecord';
 import ProductionLog from '@/models/ProductionLog';
 import User from '@/models/User';
 import { getAuthUserId, normalizeToMidnightUTC } from '@/lib/auth';
+import { isOutOfGeofence } from '@/lib/geofence';
 import { NextResponse } from 'next/server';
 
 // POST - Submit OUT punch
@@ -40,7 +41,11 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'No IN punch found for today' }, { status: 400 });
   }
 
-  // Location is captured but NOT enforced — admin reviews location in dashboard
+  // Soft geofence check on OUT punch — OR with any existing IN-punch flag
+  const outPunchOutOfBounds = isOutOfGeofence(body.outPunch?.coords);
+  if (outPunchOutOfBounds) {
+    record.isOutOfBounds = true;
+  }
 
   // Validate factory completeness
   if (user.role === 'factory') {

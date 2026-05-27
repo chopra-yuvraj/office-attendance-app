@@ -75,7 +75,7 @@ export default function AdminDashboardTable({ records, onApprove, onCorrect, onV
 
                   {/* IN Time with photo + location icons */}
                   <td className="px-4 py-3">
-                    <div className="flex items-center gap-1.5">
+                    <div className="flex items-center gap-1.5 flex-wrap">
                       <span>{rec.inPunch ? new Date(rec.inPunch.timestamp).toLocaleTimeString() : '—'}</span>
                       {inPhotoUrl && (
                         <button
@@ -93,20 +93,29 @@ export default function AdminDashboardTable({ records, onApprove, onCorrect, onV
                           href={inMapsUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex items-center justify-center w-6 h-6 rounded-md bg-emerald-50 text-emerald-600 hover:bg-emerald-100 transition"
-                          title="View IN location on Google Maps"
+                          className={`inline-flex items-center justify-center w-6 h-6 rounded-md transition ${
+                            rec.isOutOfBounds
+                              ? 'bg-red-100 text-red-600 hover:bg-red-200 animate-pulse'
+                              : 'bg-emerald-50 text-emerald-600 hover:bg-emerald-100'
+                          }`}
+                          title={rec.isOutOfBounds ? '⚠️ Location is outside office geofence!' : 'View IN location on Google Maps'}
                         >
                           <span className="text-sm leading-none">📍</span>
                         </a>
                       ) : rec.inPunch ? (
                         <span className="text-[10px] text-slate-400" title="No location data">N/A</span>
                       ) : null}
+                      {rec.isOutOfBounds && rec.inPunch && (
+                        <span className="text-[10px] font-bold text-red-600 bg-red-50 border border-red-200 px-1.5 py-0.5 rounded-full whitespace-nowrap" title="Worker punched in from outside the 250m office radius">
+                          ⚠️ Out of Bounds
+                        </span>
+                      )}
                     </div>
                   </td>
 
                   {/* OUT Time with photo + location icons */}
                   <td className="px-4 py-3">
-                    <div className="flex items-center gap-1.5">
+                    <div className="flex items-center gap-1.5 flex-wrap">
                       <span>{rec.outPunch ? new Date(rec.outPunch.timestamp).toLocaleTimeString() : '—'}</span>
                       {outPhotoUrl && (
                         <button
@@ -124,14 +133,23 @@ export default function AdminDashboardTable({ records, onApprove, onCorrect, onV
                           href={outMapsUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex items-center justify-center w-6 h-6 rounded-md bg-emerald-50 text-emerald-600 hover:bg-emerald-100 transition"
-                          title="View OUT location on Google Maps"
+                          className={`inline-flex items-center justify-center w-6 h-6 rounded-md transition ${
+                            rec.isOutOfBounds
+                              ? 'bg-red-100 text-red-600 hover:bg-red-200 animate-pulse'
+                              : 'bg-emerald-50 text-emerald-600 hover:bg-emerald-100'
+                          }`}
+                          title={rec.isOutOfBounds ? '⚠️ Location is outside office geofence!' : 'View OUT location on Google Maps'}
                         >
                           <span className="text-sm leading-none">📍</span>
                         </a>
                       ) : rec.outPunch ? (
                         <span className="text-[10px] text-slate-400" title="No location data">N/A</span>
                       ) : null}
+                      {rec.isOutOfBounds && rec.outPunch && (
+                        <span className="text-[10px] font-bold text-red-600 bg-red-50 border border-red-200 px-1.5 py-0.5 rounded-full whitespace-nowrap" title="Worker punched out from outside the 250m office radius">
+                          ⚠️ Out of Bounds
+                        </span>
+                      )}
                     </div>
                   </td>
 

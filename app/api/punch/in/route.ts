@@ -5,6 +5,7 @@ import User from '@/models/User';
 import { getAuthUserId } from '@/lib/auth';
 import { normalizeToMidnightUTC } from '@/lib/auth';
 import LeaveRequest from '@/models/LeaveRequest';
+import { isOutOfGeofence } from '@/lib/geofence';
 import { NextResponse } from 'next/server';
 
 // POST - Submit IN punch (selfie + coords)
@@ -31,7 +32,8 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'Already punched IN today' }, { status: 409 });
   }
 
-  // Location is captured but NOT enforced — admin reviews location in dashboard
+  // Soft geofence check — never blocks, only flags
+  const outOfBounds = isOutOfGeofence(body.coords);
 
   const record = existing ?? new AttendanceRecord({ userId, date: today });
   record.inPunch = {
@@ -41,6 +43,7 @@ export async function POST(req: Request) {
     driveWebViewLink: body.driveWebViewLink,
   };
   record.status = 'pending';
+  record.isOutOfBounds = outOfBounds;
   await record.save();
 
   return NextResponse.json({ recordId: record._id });

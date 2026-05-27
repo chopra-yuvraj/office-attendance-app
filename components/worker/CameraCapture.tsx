@@ -9,13 +9,13 @@ interface Props {
 
 /**
  * Camera component that uses getUserMedia for a live preview + capture flow.
- * Falls back to <input type="file" capture> on devices where getUserMedia fails.
- * This approach properly triggers the browser permission prompt for camera access.
+ * SECURITY: No file-upload fallback — only live camera frames are accepted.
+ * If camera permissions are denied, a clear error is shown instructing the
+ * user to enable camera access in their browser/device settings.
  */
 export default function CameraCapture({ mode, label, onCapture }: Props) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
-  const [useFallback, setUseFallback] = useState(false);
   const [cameraReady, setCameraReady] = useState(false);
   const [error, setError] = useState('');
 
@@ -29,6 +29,12 @@ export default function CameraCapture({ mode, label, onCapture }: Props) {
 
     async function startCamera() {
       try {
+        // Check for getUserMedia support
+        if (!navigator.mediaDevices?.getUserMedia) {
+          setError('Your browser does not support live camera access. Please use a modern browser like Chrome, Safari, or Edge.');
+          return;
+        }
+
         const stream = await navigator.mediaDevices.getUserMedia({
           video: { facingMode: mode === 'selfie' ? 'user' : 'environment', width: { ideal: 1280 }, height: { ideal: 960 } },
           audio: false,
@@ -42,21 +48,25 @@ export default function CameraCapture({ mode, label, onCapture }: Props) {
         setCameraReady(true);
       } catch (err: any) {
         if (cancelled) return;
-        // If getUserMedia is unsupported or denied, fall back to file input
         if (err.name === 'NotAllowedError') {
-          setError('Camera permission denied. Please enable it in your browser settings.');
+          setError('Camera permission denied. Please enable camera access in your browser or device settings, then try again.');
+        } else if (err.name === 'NotFoundError' || err.name === 'DevicesNotFoundError') {
+          setError('No camera found on this device. A camera is required to take your attendance photo.');
+        } else if (err.name === 'NotReadableError' || err.name === 'TrackStartError') {
+          setError('Camera is in use by another application. Please close other apps using the camera and retry.');
+        } else {
+          setError(`Camera error: ${err.message || 'Unknown error'}. Please check your device settings.`);
         }
-        setUseFallback(true);
       }
     }
 
-    if (!useFallback) startCamera();
+    startCamera();
 
     return () => {
       cancelled = true;
       stopStream();
     };
-  }, [mode, useFallback, stopStream]);
+  }, [mode, stopStream]);
 
   function captureFromVideo() {
     const video = videoRef.current;
@@ -71,38 +81,43 @@ export default function CameraCapture({ mode, label, onCapture }: Props) {
     onCapture(base64);
   }
 
-  // Fallback: HTML5 file input (works on mobile with native camera apps)
-  function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onloadend = () => onCapture(reader.result as string);
-    reader.readAsDataURL(file);
+  function retryCamera() {
+    setError('');
+    setCameraReady(false);
+    stopStream();
+    // Re-trigger useEffect by toggling a restart — we rely on React re-running
+    // the effect when error is cleared. For a clean restart, unmount/remount.
+    window.location.reload();
   }
 
-  // Fallback mode
-  if (useFallback) {
+  // Error state — NO file picker fallback, only camera retry
+  if (error) {
     return (
-      <div className="flex flex-col items-center gap-4 p-4 bg-slate-50 rounded-xl border border-slate-200">
-        {error && <p className="text-xs text-red-500">{error}</p>}
-        <p className="text-sm text-slate-600 font-medium">
-          {label ?? (mode === 'selfie' ? '📷 Take a selfie to continue' : '📸 Photograph the machine')}
-        </p>
-        <label className="cursor-pointer bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-lg font-semibold text-sm transition text-center w-full max-w-[200px]">
-          Open Camera
-          <input
-            type="file"
-            accept="image/*"
-            capture={mode === 'selfie' ? 'user' : 'environment'}
-            onChange={handleFileChange}
-            className="hidden"
-          />
-        </label>
+      <div className="flex flex-col items-center gap-4 p-6 bg-red-50 rounded-xl border border-red-200">
+        <div className="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center">
+          <span className="text-2xl">🚫</span>
+        </div>
+        <p className="text-sm text-red-700 font-semibold text-center">Camera Required</p>
+        <p className="text-xs text-red-500 text-center leading-relaxed max-w-xs">{error}</p>
+        <div className="bg-white border border-red-100 rounded-lg p-3 mt-1 w-full max-w-xs">
+          <p className="text-[11px] text-slate-600 leading-relaxed">
+            <strong>How to enable:</strong><br/>
+            • <strong>Android Chrome:</strong> Tap the 🔒 icon in the address bar → Site Settings → Camera → Allow<br/>
+            • <strong>iPhone Safari:</strong> Settings → Safari → Camera → Allow<br/>
+            • <strong>Desktop:</strong> Click the camera icon in the address bar and allow access
+          </p>
+        </div>
+        <button
+          onClick={retryCamera}
+          className="mt-2 bg-red-600 hover:bg-red-700 text-white px-6 py-2.5 rounded-lg font-semibold text-sm transition"
+        >
+          🔄 Retry Camera
+        </button>
       </div>
     );
   }
 
-  // Live camera preview mode
+  // Live camera preview mode — the ONLY capture method
   return (
     <div className="flex flex-col items-center gap-4 p-4 bg-slate-900 rounded-xl border border-slate-700">
       <p className="text-sm text-white font-medium">
@@ -118,8 +133,9 @@ export default function CameraCapture({ mode, label, onCapture }: Props) {
           className={`w-full h-full object-cover ${mode === 'selfie' ? 'scale-x-[-1]' : ''}`}
         />
         {!cameraReady && (
-          <div className="absolute inset-0 flex items-center justify-center bg-black/60">
+          <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/60 gap-2">
             <div className="w-8 h-8 border-4 border-white border-t-transparent rounded-full animate-spin" />
+            <p className="text-xs text-white/70">Starting camera…</p>
           </div>
         )}
       </div>
@@ -131,13 +147,6 @@ export default function CameraCapture({ mode, label, onCapture }: Props) {
         aria-label="Capture photo"
       >
         <div className="w-12 h-12 rounded-full bg-red-500 hover:bg-red-600 transition" />
-      </button>
-
-      <button
-        onClick={() => { stopStream(); setUseFallback(true); }}
-        className="text-xs text-slate-400 underline"
-      >
-        Use file picker instead
       </button>
     </div>
   );

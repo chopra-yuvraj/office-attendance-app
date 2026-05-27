@@ -28,6 +28,7 @@ export interface IAttendanceRecord extends Document {
   hoursFlag: AttendanceFlag | null;     // set during admin review
   status: PunchStatus;
   isManualEntry: boolean;              // admin-created entry
+  isOutOfBounds: boolean;              // soft geofence flag — true if punch was >250m from office
   adminNotes: string;
   corrections: ICorrection[];          // append-only audit trail
   leaveRequestId: mongoose.Types.ObjectId | null;
@@ -60,6 +61,7 @@ const AttendanceRecordSchema = new Schema<IAttendanceRecord>({
   hoursFlag:           { type: String, enum: ['full_day','half_day_alert','absent','leave_approved','overtime'], default: null },
   status:              { type: String, enum: ['pending','approved','corrected'], default: 'pending' },
   isManualEntry:       { type: Boolean, default: false },
+  isOutOfBounds:       { type: Boolean, default: false },
   adminNotes:          { type: String, default: '' },
   corrections:         [CorrectionSchema],
   leaveRequestId:      { type: Schema.Types.ObjectId, ref: 'LeaveRequest', default: null },
